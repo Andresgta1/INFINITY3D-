@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Infinity3D Mobile - Compacto (Gizmos Mejorados)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000;
+            touch-action: none; /* Previene el comportamiento de desplazamiento por defecto */
+            user-select: none; /* Deshabilita la selección de texto */
+            -webkit-tap-highlight-color: transparent; /* Elimina el resplandor de toque en iOS */
+        }
+
+        #barra-inferior, #barra-superior {
+            position: fixed;
+            left: 0;
+            right: 0;
+            background: #1a1a1a;
+            display: flex;
+            flex-wrap: wrap; /* Permite que los botones se envuelvan si hay muchos */
+            justify-content: center;
+            gap: 5px; /* Espacio reducido entre botones */
+            padding: 5px; /* Padding reducido */
+            z-index: 100;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.4);
+        }
+
+        #barra-inferior {
+            bottom: 0;
+        }
+
+        #barra-superior {
+            top: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+
+        .boton, .boton-menu {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 8px 12px; /* Padding un poco más compacto */
+            border-radius: 20px;
+            font-size: 13px; /* Fuente más pequeña */
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px; /* Espacio reducido para íconos/texto */
+            white-space: nowrap; /* Evita que el texto del botón se rompa */
+        }
+
+        .boton:hover, .boton-menu:hover {
+            background: #555;
+        }
+
+        .boton:active, .boton-menu:active {
+            transform: scale(0.98);
+        }
+
+        canvas {
+            position: absolute;
+            left: 0;
+            /* La altura y el 'top' se establecerán con JavaScript para llenar el espacio */
+        }
+
+        /* Paneles flotantes */
+        .panel {
+            position: fixed;
+            background: rgba(40, 40, 40, 0.9); /* Fondo un poco menos opaco */
+            color: white;
+            padding: 10px; /* Padding reducido */
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+            backdrop-filter: blur(4px); /* Desenfoque sutil */
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        #colorBox {
+            top: 60px; /* Ajustado para no colisionar con la barra superior */
+            right: 10px; /* Posición compacta */
+            width: 180px; /* Más estrecho */
+            padding: 8px; /* Ajustado */
+        }
+
+        #colorPicker {
+            width: 100%;
+            height: 35px; /* Más compacto */
+        }
+
+        #configBox {
+            top: 60px; /* Ajustado */
+            left: 10px; /* Posición compacta */
+            width: 200px; /* Más estrecho */
+            padding: 8px; /* Ajustado */
+        }
+
+        #configBox label {
+            margin-bottom: 5px; /* Margen reducido */
+            font-size: 14px; /* Más pequeño */
+        }
+
+        #configBox input[type="range"] {
+            height: 6px; /* Más delgado */
+        }
+
+        #configBox input[type="range"]::-webkit-slider-thumb {
+            width: 18px; /* Más pequeño */
+            height: 18px; /* Más pequeño */
+        }
+
+        #configBox input[type="range"]::-moz-range-thumb {
+            width: 18px; /* Más pequeño */
+            height: 18px; /* Más pequeño */
+        }
+
+        #velocidadLabel {
+            font-size: 13px; /* Más pequeño */
+        }
+
+        #listaBox {
+            top: 120px; /* Ajustado para no chocar y ser más compacto */
+            left: 10px;
+            max-height: 200px; /* Máx. altura reducida */
+            width: 200px; /* Más estrecho */
+            padding: 0;
+        }
+
+        #listaBox h3 {
+            padding: 8px 10px; /* Reducido */
+            font-size: 15px; /* Más pequeño */
+            margin: 0;
+            border-bottom: 1px solid #444;
+        }
+
+        .itemLista {
+            padding: 8px 10px; /* Reducido */
+            font-size: 13px; /* Más pequeño */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            cursor: pointer;
+        }
+        .itemLista:last-child {
+            border-bottom: none;
+        }
+        .itemLista:hover {
+            background: #555;
+        }
+        .itemLista.seleccionado {
+            background: #007bff;
+            font-weight: bold;
+        }
+
+        .boton-eliminar-item {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 3px 6px; /* Más pequeño */
+            font-size: 11px; /* Más pequeño */
+            cursor: pointer;
+        }
+        .boton-eliminar-item:hover {
+            background: #c82333;
+        }
+
+        /* Toast/Notificación */
+        #toast {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 60px; /* Encima de la barra inferior (ajustado) */
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px; /* Reducido */
+            border-radius: 6px; /* Más pequeño */
+            font-size: 13px; /* Más pequeño */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 1000;
+            white-space: nowrap;
+        }
+        #toast.mostrar {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Overlays y diálogos */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 500;
+            display: none; /* Oculto por defecto */
+        }
+
+        .dialogo {
+            background: #282828;
+            color: white;
+            padding: 20px; /* Reducido */
+            border-radius: 8px; /* Más compacto */
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            max-width: 80%;
+        }
+
+        .dialogo h3 {
+            margin-bottom: 15px; /* Reducido */
+            font-size: 18px; /* Más pequeño */
+            color: #eee;
+        }
+
+        .dialogo p {
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        .dialogo-botones button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px; /* Reducido */
+            border-radius: 6px; /* Más compacto */
+            font-size: 14px; /* Más pequeño */
+            cursor: pointer;
+            margin: 0 8px; /* Reducido */
+            transition: background 0.2s ease;
+        }
+        .dialogo-botones button:hover {
+            background: #0056b3;
+        }
+        .dialogo-botones button:last-child {
+            background: #6c757d;
+        }
+        .dialogo-botones button:last-child:hover {
+            background: #5a6268;
+        }
+
+        /* Estilos para los modos de transformación */
+        .modo-transformacion {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+            gap: 6px; /* Espacio reducido */
+        }
+
+        .modo-transformacion button {
+            flex-grow: 1;
+            padding: 6px 10px; /* Reducido */
+            border-radius: 6px; /* Más compacto */
+            font-size: 12px; /* Más pequeño */
+            background: #444;
+        }
+        .modo-transformacion button.activo {
+            background: #007bff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="barra-superior">
+        <button class="boton" onclick="mostrarPanel('configBox')">⚙️ Config</button>
+        <button class="boton" onclick="activarPantallaCompleta()">⛶ Fullscreen</button>
+        <button class="boton" onclick="guardarEscena()">💾 Guardar</button>
+        <button class="boton" onclick="cargarEscena()">📂 Cargar</button>
+        <button class="boton" onclick="reiniciarEscena()">🔄 Nueva</button>
+        <button class="boton" onclick="deshacerAccion()" id="btnDeshacer">↩ Deshacer</button>
+        <button class="boton" onclick="rehacerAccion()" id="btnRehacer">↪ Rehacer</button>
+    </div>
+
+    <div id="barra-inferior">
+        <button class="boton" onclick="agregarFigura('cubo')">+ Cubo</button>
+        <button class="boton" onclick="agregarFigura('esfera')">+ Esfera</button>
+        <button class="boton" onclick="agregarFigura('cono')">+ Cono</button>
+        <button class="boton" onclick="agregarFigura('cilindro')">+ Cilindro</button>
+        <button class="boton" onclick="centrarFigura()">🎯 Centrar</button>
+        <button class="boton" onclick="mostrarPanel('listaBox')">📋 Figuras</button>
+        <button class="boton" onclick="agregarFrame()">+ Frame</button>
+        <button class="boton" onclick="reproducirAnimacion()">▶ Animar</button>
+        <button class="boton" onclick="exportarVideo()">🎥 Exportar</button>
+    </div>
+
+    <div id="colorBox" class="panel">
+        <label>🎨 Color:</label>
+        <input type="color" id="colorPicker" />
+    </div>
+
+    <div id="configBox" class="panel">
+        <label>⚙️ Vel. Movimiento:</label>
+        <input type="range" id="velocidadSlider" min="0.01" max="0.2" step="0.01" value="0.05">
+        <span id="velocidadLabel">0.05</span>
+        <hr style="border-color: #444; margin: 10px 0;">
+        <label>🎚 Modo Transformación:</label>
+        <div class="modo-transformacion">
+            <button id="btnModoTrasladar" onclick="establecerModoTransformacion('trasladar')" class="activo">Mover</button>
+            <button id="btnModoRotar" onclick="establecerModoTransformacion('rotar')">Rotar</button>
+            <button id="btnModoEscalar" onclick="establecerModoTransformacion('escalar')">Escalar</button>
+        </div>
+    </div>
+
+    <div id="listaBox" class="panel">
+        <h3>📋 Figuras en Escena</h3>
+        <div id="listaContenido"></div>
+    </div>
+
+    <div id="toast"></div>
+
+    <div id="dialogoConfirmacion" class="overlay">
+        <div class="dialogo">
+            <h3 id="dialogoTitulo"></h3>
+            <p id="dialogoMensaje"></p>
+            <div class="dialogo-botones">
+                <button id="btnDialogoSi">Sí</button>
+                <button id="btnDialogoNo">No</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.140.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+        const escena = new THREE.Scene();
+        const camara = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const render = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+        document.body.appendChild(render.domElement);
+
+        const controls = new THREE.OrbitControls(camara, render.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.screenSpacePanning = false;
+        controls.minDistance = 2;
+        controls.maxDistance = 100;
+        controls.target.set(0, 1, 0); // Establece el punto alrededor del cual orbita la cámara
+
+        escena.add(new THREE.AmbientLight(0xffffff, 0.8)); // Luz ambiental suave
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6); // Luz direccional
+        directionalLight.position.set(5, 10, 7.5).normalize();
+        escena.add(directionalLight);
+
+        const gridHelper = new THREE.GridHelper(10, 10); // Rejilla en el suelo
+        escena.add(gridHelper);
+
+        // ********* Ajuste clave para el tamaño del canvas *********
+        function ajustarCanvasSize() {
+            const barSuperiorHeight = document.getElementById('barra-superior').offsetHeight;
+            const barInferiorHeight = document.getElementById('barra-inferior').offsetHeight;
+            const availableHeight = window.innerHeight - barSuperiorHeight - barInferiorHeight;
+
+            render.setSize(window.innerWidth, availableHeight);
+            render.domElement.style.top = barSuperiorHeight + 'px';
+            render.domElement.style.height = availableHeight + 'px';
+
+            camara.aspect = window.innerWidth / availableHeight;
+            camara.updateProjectionMatrix();
+        }
+
+        window.addEventListener("resize", ajustarCanvasSize);
+        window.addEventListener("load", ajustarCanvasSize); // Asegura que se ejecuta después de que todo el DOM esté cargado
+        ajustarCanvasSize(); // Llamada inicial
+
+        camara.position.set(0, 4, 8); // Posición inicial de la cámara
+
+        const objetos = [];
+        const contador = { cubo: 0, esfera: 0, cono: 0, cilindro: 0 };
+        const raycaster = new THREE.Raycaster();
+        const puntero = new THREE.Vector2(); // Coordenadas del puntero (toque actual en NDC)
+        let previousTouchPos = new THREE.Vector2(); // Coordenadas del puntero del frame anterior (en pixeles de pantalla)
+
+        let objetoSeleccionado = null;
+        let gizmos = []; // Almacena los gizmos de transformación
+        let modoTransformacion = 'trasladar'; // Modo actual: trasladar, rotar, escalar
+
+        // Referencias a elementos del DOM
+        const colorBox = document.getElementById("colorBox");
+        const colorPicker = document.getElementById("colorPicker");
+        const slider = document.getElementById("velocidadSlider");
+        const velLabel = document.getElementById("velocidadLabel");
+        const listaBox = document.getElementById("listaBox");
+        const listaContenido = document.getElementById("listaContenido");
+        const toast = document.getElementById("toast");
+        let velocidadMovimiento = parseFloat(slider.value); // Velocidad de movimiento/transformación
+
+        // Referencias a elementos del diálogo de confirmación
+        const dialogoConfirmacion = document.getElementById('dialogoConfirmacion');
+        const dialogoTitulo = document.getElementById('dialogoTitulo');
+        const dialogoMensaje = document.getElementById('dialogoMensaje');
+        const btnDialogoSi = document.getElementById('btnDialogoSi');
+        const btnDialogoNo = document.getElementById('btnDialogoNo');
+        let accionConfirmacion = null; // Almacena la acción a confirmar
+
+        // Historial para deshacer/rehacer
+        const historial = [];
+        let indiceHistorial = -1;
+        const MAX_HISTORIAL = 50; // Límite de acciones en el historial
+
+        // *** NUEVA VARIABLE PARA LA TRASLACIÓN ***
+        let puntoInterseccionInicial3D = new THREE.Vector3(); // Almacena el punto 3D donde el rayo del toque inicial golpeó el gizmo.
+
+        slider.addEventListener("input", () => {
+            velocidadMovimiento = parseFloat(slider.value);
+            velLabel.textContent = velocidadMovimiento.toFixed(2);
+        });
+
+        // --- Funciones de Interfaz de Usuario ---
+
+        function mostrarToast(mensaje, duracion = 3000) {
+            toast.textContent = mensaje;
+            toast.classList.add("mostrar");
+            setTimeout(() => {
+                toast.classList.remove("mostrar");
+            }, duracion);
+        }
+
+        function mostrarPanel(panelId) {
+            const panel = document.getElementById(panelId);
+            // Oculta todos los demás paneles antes de mostrar el actual
+            document.querySelectorAll('.panel').forEach(p => {
+                if (p.id !== panelId) p.style.display = 'none';
+            });
+            // Alternar visibilidad del panel
+            panel.style.display = panel.style.display === "block" ? "none" : "block";
+            if (panelId === 'listaBox' && panel.style.display === 'block') {
+                actualizarLista(); // Actualiza la lista si se muestra el panel de figuras
+            }
+        }
+
+        function mostrarColorPicker(obj) {
+            colorPicker.value = "#" + obj.material.color.getHexString();
+            colorBox.style.display = "block";
+            colorPicker.oninput = () => {
+                const oldColor = obj.userData.lastColor;
+                obj.material.color.set(colorPicker.value);
+                const newColor = obj.material.color.getHex();
+                registrarAccion({ type: 'color', objectId: obj.uuid, oldColor: oldColor, newColor: newColor });
+                obj.userData.lastColor = newColor; // Actualiza el último color para el historial
+            };
+        }
+
+        function ocultarColorPicker() {
+            colorBox.style.display = "none";
+        }
+
+        function actualizarBotonesTransformacion() {
+            document.querySelectorAll('.modo-transformacion button').forEach(btn => {
+                btn.classList.remove('activo');
+            });
+            document.getElementById(`btnModo${modoTransformacion.charAt(0).toUpperCase() + modoTransformacion.slice(1)}`).classList.add('activo');
+        }
+
+        function establecerModoTransformacion(modo) {
+            modoTransformacion = modo;
+            actualizarBotonesTransformacion();
+            if (objetoSeleccionado) {
+                crearGizmos(objetoSeleccionado); // Recrea gizmos para el nuevo modo
+            }
+            mostrarToast(`Modo: ${modo.charAt(0).toUpperCase() + modo.slice(1)}`);
+        }
+        establecerModoTransformacion('trasladar'); // Modo por defecto al iniciar
+
+        // --- Funciones de Gestión de Escena y Objetos ---
+
+        function agregarFigura(tipo) {
+            let geo;
+            switch (tipo) {
+                case 'cubo': geo = new THREE.BoxGeometry(1, 1, 1); break;
+                case 'esfera': geo = new THREE.SphereGeometry(0.6, 32, 16); break;
+                case 'cono': geo = new THREE.ConeGeometry(0.5, 1.2, 32); break;
+                case 'cilindro': geo = new THREE.CylinderGeometry(0.5, 0.5, 1.2, 32); break;
+                default: return; // No hace nada si el tipo no es reconocido
+            }
+            const mat = new THREE.MeshStandardMaterial({ color: Math.random() * 0xffffff });
+            const figura = new THREE.Mesh(geo, mat);
+            figura.position.set(Math.random() * 3 - 1.5, 0.6, Math.random() * 3 - 1.5);
+            contador[tipo]++;
+            figura.name = tipo.charAt(0).toUpperCase() + tipo.slice(1) + " " + contador[tipo];
+            figura.userData.tipo = tipo; // Guarda el tipo para recrear al cargar
+            figura.userData.initialPosition = figura.position.clone(); // Guarda estado inicial (útil para reiniciar/animar)
+            figura.userData.initialRotation = figura.rotation.clone();
+            figura.userData.initialScale = figura.scale.clone();
+            figura.userData.lastColor = mat.color.getHex(); // Guarda el color para el historial
+            escena.add(figura);
+            objetos.push(figura);
+            actualizarLista();
+            seleccionarFigura(figura); // Selecciona la figura recién creada
+            mostrarToast(`✔️ ${figura.name} agregado.`);
+            registrarAccion({ type: 'add', objectId: figura.uuid, objectData: serializarObjeto(figura) }); // Registra la acción
+        }
+
+        function eliminarFigura(obj) {
+            if (obj) {
+                mostrarDialogoConfirmacion('eliminar', obj);
+            }
+        }
+
+        function confirmarEliminar(obj) {
+            const index = objetos.indexOf(obj);
+            if (index > -1) {
+                objetos.splice(index, 1);
+                escena.remove(obj);
+                if (objetoSeleccionado && objetoSeleccionado.uuid === obj.uuid) {
+                    objetoSeleccionado = null;
+                    eliminarGizmos();
+                    ocultarColorPicker();
+                }
+                actualizarLista();
+                mostrarToast(`🗑️ ${obj.name} eliminado.`);
+                // Serializa el objeto ANTES de eliminarlo para poder rehacerlo
+                registrarAccion({ type: 'delete', objectData: serializarObjeto(obj) });
+            }
+        }
+
+        function actualizarLista() {
+            listaContenido.innerHTML = "";
+            if (objetos.length === 0) {
+                listaContenido.innerHTML = "<p style='padding: 10px; text-align: center; color: #aaa; font-size:12px;'>No hay figuras en la escena.</p>";
+                return;
+            }
+            objetos.forEach(obj => {
+                const item = document.createElement("div");
+                item.className = `itemLista ${objetoSeleccionado && objetoSeleccionado.uuid === obj.uuid ? 'seleccionado' : ''}`;
+                item.textContent = obj.name;
+                item.onclick = (e) => {
+                    e.stopPropagation(); // Evita que el clic se propague al canvas
+                    seleccionarFiguraDesdeLista(obj);
+                };
+
+                const deleteButton = document.createElement("button");
+                deleteButton.className = "boton-eliminar-item";
+                deleteButton.textContent = "X";
+                deleteButton.onclick = (e) => {
+                    e.stopPropagation();
+                    eliminarFigura(obj);
+                };
+                item.appendChild(deleteButton);
+                listaContenido.appendChild(item);
+            });
+        }
+
+        function seleccionarFiguraDesdeLista(obj) {
+            seleccionarFigura(obj);
+            mostrarPanel('listaBox'); // Cierra el panel después de seleccionar
+        }
+
+        function seleccionarFigura(obj) {
+            if (objetoSeleccionado === obj) return; // No hacer nada si ya está seleccionado
+            if (objetoSeleccionado) {
+                const oldItem = document.querySelector(`.itemLista.seleccionado`);
+                if (oldItem) oldItem.classList.remove('seleccionado');
+            }
+
+            objetoSeleccionado = obj;
+            crearGizmos(objetoSeleccionado);
+            mostrarColorPicker(objetoSeleccionado);
+            mostrarToast(`✨ ${obj.name} seleccionado.`);
+            actualizarLista(); // Para actualizar la clase 'seleccionado' en la lista
+        }
+
+        function centrarFigura() {
+            if (objetoSeleccionado) {
+                const oldPos = objetoSeleccionado.position.clone();
+                objetoSeleccionado.position.set(0, objetoSeleccionado.position.y, 0); // Solo centra en X y Z
+                // Los gizmos se actualizarán automáticamente en el bucle de animación
+                mostrarToast(`🎯 ${objetoSeleccionado.name} centrado.`);
+                registrarAccion({ type: 'transform', objectId: objetoSeleccionado.uuid, oldState: { position: oldPos.clone(), rotation: objetoSeleccionado.rotation.clone(), scale: objetoSeleccionado.scale.clone() }, newState: { position: objetoSeleccionado.position.clone(), rotation: objetoSeleccionado.rotation.clone(), scale: objetoSeleccionado.scale.clone() } });
+            } else {
+                mostrarToast("☝️ Selecciona una figura primero.");
+            }
+        }
+
+        // --- Gizmos de Transformación ---
+
+        function crearGizmosTraslacion(obj) {
+            const colores = [0xff0000, 0x00ff00, 0x0000ff]; // Rojo (X), Verde (Y), Azul (Z)
+            const ejes = ['x', 'y', 'z'];
+            const rotaciones = [
+                new THREE.Vector3(0, 0, -Math.PI / 2), // Eje X
+                new THREE.Vector3(0, 0, 0),             // Eje Y
+                new THREE.Vector3(Math.PI / 2, 0, 0)    // Eje Z
+            ];
+            const escalaGizmo = 1.2; // Escala base para los gizmos
+
+            for (let i = 0; i < 3; i++) {
+                const grupo = new THREE.Group(); // Grupo para barra y punta
+                const barra = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.02, 0.02, 1 * escalaGizmo, 8),
+                    new THREE.MeshBasicMaterial({ color: colores[i], transparent: true, opacity: 0.8 }));
+                barra.position.y = 0.5 * escalaGizmo; // Posicionar la barra
+                const punta = new THREE.Mesh(
+                    new THREE.ConeGeometry(0.06, 0.2 * escalaGizmo, 8),
+                    new THREE.MeshBasicMaterial({ color: colores[i], transparent: true, opacity: 0.8 }));
+                punta.position.y = 1.1 * escalaGizmo; // Posicionar la punta
+                grupo.add(barra);
+                grupo.add(punta);
+
+                grupo.rotation.set(rotaciones[i].x, rotaciones[i].y, rotaciones[i].z);
+                grupo.position.copy(obj.position); // Posicionar el grupo en el objeto
+                grupo.userData.eje = ejes[i];
+                grupo.userData.tipoGizmo = 'traslacion';
+                escena.add(grupo);
+                gizmos.push(grupo);
+            }
+        }
+
+        function crearGizmosRotacion(obj) {
+            const colores = [0xff0000, 0x00ff00, 0x0000ff]; // Rojo (X), Verde (Y), Azul (Z)
+            const ejes = ['x', 'y', 'z'];
+            const rotaciones = [
+                new THREE.Vector3(0, Math.PI / 2, 0), // Anillo para rotación en X (eje en Y world)
+                new THREE.Vector3(Math.PI / 2, 0, 0), // Anillo para rotación en Y (eje en X world)
+                new THREE.Vector3(0, 0, 0)             // Anillo para rotación en Z (eje en Z world)
+            ];
+            // Calcula un radio dinámico basado en el tamaño del objeto para que los gizmos sean visibles
+            const bbox = new THREE.Box3().setFromObject(obj);
+            const size = new THREE.Vector3();
+            bbox.getSize(size);
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const radioAnillo = maxDim * 0.7; // Ajusta este factor para el tamaño deseado
+
+            for (let i = 0; i < 3; i++) {
+                const anillo = new THREE.Mesh(
+                    new THREE.TorusGeometry(radioAnillo, 0.02, 16, 100), // Grosor y segmentos del anillo
+                    new THREE.MeshBasicMaterial({ color: colores[i], transparent: true, opacity: 0.8, side: THREE.DoubleSide })
+                );
+                anillo.position.copy(obj.position); // Posición en el centro del objeto
+                anillo.rotation.set(rotaciones[i].x, rotaciones[i].y, rotaciones[i].z);
+                anillo.userData.eje = ejes[i];
+                anillo.userData.tipoGizmo = 'rotacion';
+                escena.add(anillo);
+                gizmos.push(anillo);
+            }
+        }
+
+        function crearGizmosEscala(obj) {
+            // Eliminar gizmos de escala anteriores antes de recrearlos
+            gizmos = gizmos.filter(g => g.userData.tipoGizmo !== 'escala');
+
+            const size = new THREE.Vector3();
+            new THREE.Box3().setFromObject(obj).getSize(size); // Obtiene el tamaño de la caja contenedora
+
+            // Define las 8 esquinas relativas al centro del objeto
+            const halfSize = size.multiplyScalar(0.5);
+            // Estas son las posiciones relativas de las esquinas del BoundingBox del objeto, antes de aplicar la escala del objeto.
+            const posicionesRelativas = [
+                new THREE.Vector3(halfSize.x, halfSize.y, halfSize.z),
+                new THREE.Vector3(-halfSize.x, halfSize.y, halfSize.z),
+                new THREE.Vector3(halfSize.x, -halfSize.y, halfSize.z),
+                new THREE.Vector3(halfSize.x, halfSize.y, -halfSize.z),
+                new THREE.Vector3(-halfSize.x, -halfSize.y, halfSize.z),
+                new THREE.Vector3(-halfSize.x, halfSize.y, -halfSize.z),
+                new THREE.Vector3(halfSize.x, -halfSize.y, -halfSize.z),
+                new THREE.Vector3(-halfSize.x, -halfSize.y, -halfSize.z)
+            ];
+
+            const gizmoSize = 0.15; // Tamaño de los cubos de escala
+            for (const posRel of posicionesRelativas) {
+                const cuboGizmo = new THREE.Mesh(
+                    new THREE.BoxGeometry(gizmoSize, gizmoSize, gizmoSize),
+                    new THREE.MeshBasicMaterial({ color: 0xffff00, transparent: true, opacity: 0.8 }) // Amarillo
+                );
+                // El cubo gizmo se posiciona relativamente al objeto, luego el objeto se encarga de su transformación
+                // Esto es clave: hacemos el gizmo hijo del objeto para que herede sus transformaciones.
+                obj.add(cuboGizmo); // ¡Aquí está el cambio clave!
+                cuboGizmo.position.copy(posRel); // Posición relativa dentro del objeto padre
+
+                cuboGizmo.userData.tipoGizmo = 'escala';
+                cuboGizmo.userData.direccionLocalEscala = posRel.clone().normalize(); // Dirección de escalado
+                gizmos.push(cuboGizmo);
+            }
+        }
+
+
+        function crearGizmos(obj) {
+            eliminarGizmos(); // Primero, elimina los gizmos existentes
+            if (!obj) return; // Si no hay objeto seleccionado, no crea gizmos
+
+            switch (modoTransformacion) {
+                case 'trasladar':
+                    crearGizmosTraslacion(obj);
+                    break;
+                case 'rotar':
+                    crearGizmosRotacion(obj);
+                    break;
+                case 'escalar':
+                    crearGizmosEscala(obj);
+                    break;
+            }
+        }
+
+        function eliminarGizmos() {
+            // Para gizmos de escala que son hijos del objeto, necesitamos eliminarlos de su padre
+            gizmos.forEach(g => {
+                if (g.parent) {
+                    g.parent.remove(g);
+                } else {
+                    escena.remove(g);
+                }
+            });
+            gizmos = [];
+        }
+
+        // --- Manejo de Eventos Táctiles (RE-ENHANCED FOR ROTATION AND SCALE) ---
+        let tocando = false;
+        let objetoArrastrando = null; // Referencia al gizmo que se está arrastrando
+        let ultimoEstadoObjeto = null; // Para el historial de deshacer/rehacer
+
+        render.domElement.addEventListener("touchstart", e => {
+            // Siempre asumimos que OrbitControls puede estar activo, a menos que el toque sea para un gizmo o selección.
+            controls.enabled = true; // Habilitamos por defecto, luego deshabilitamos si se detecta un uso específico
+
+            if (e.touches.length === 1) { // Solo un dedo
+                previousTouchPos.set(e.touches[0].clientX, e.touches[0].clientY);
+                tocando = true;
+                objetoArrastrando = null; // Reiniciar en cada touchstart
+
+                const rect = render.domElement.getBoundingClientRect();
+                puntero.x = ((e.touches[0].clientX - rect.left) / rect.width) * 2 - 1;
+                puntero.y = -((e.touches[0].clientY - rect.top) / rect.height) * 2 + 1;
+                raycaster.setFromCamera(puntero, camara);
+
+                // 1. Intentar intersectar con gizmos primero
+                // IMPORTANT: Usar "true" para intersectObjects para que verifique recursivamente los hijos de los gizmos (ej. grupo de traslacion)
+                const interGizmo = raycaster.intersectObjects(gizmos, true);
+
+                if (interGizmo.length > 0 && objetoSeleccionado) {
+                    let hitGizmo = interGizmo[0].object; // El objeto exacto que fue impactado
+
+                    // Buscar el gizmo principal (el "padre" lógico con userData.tipoGizmo)
+                    while (hitGizmo && !hitGizmo.userData.tipoGizmo) {
+                        hitGizmo = hitGizmo.parent;
+                    }
+
+                    if (hitGizmo && (hitGizmo.userData.tipoGizmo === 'traslacion' || hitGizmo.userData.tipoGizmo === 'rotacion' || hitGizmo.userData.tipoGizmo === 'escala')) {
+                        objetoArrastrando = hitGizmo;
+
+                        if (objetoArrastrando.userData.tipoGizmo === 'traslacion') {
+                            // Obtenemos el punto de intersección exacto en 3D del rayo con el gizmo.
+                            // ¡Importante!: Usamos interGizmo[0].point que es el punto exacto donde el rayo tocó.
+                            puntoInterseccionInicial3D.copy(interGizmo[0].point);
+                            console.log("Punto de intersección inicial 3D para traslación:", puntoInterseccionInicial3D);
+                        }
+
+                        ultimoEstadoObjeto = { // Guarda el estado antes de la transformación
+                            position: objetoSeleccionado.position.clone(),
+                            rotation: objetoSeleccionado.rotation.clone(),
+                            scale: objetoSeleccionado.scale.clone()
+                        };
+                        controls.enabled = false; // Deshabilita OrbitControls para manipular el gizmo
+                        e.preventDefault(); // Evita el scroll o zoom del navegador
+                        console.log("Gizmo seleccionado:", objetoArrastrando.userData.tipoGizmo, objetoArrastrando.userData.eje || "");
+                        return; // Ya se detectó un gizmo, no hacer más
+                    }
+                }
+
+                // 2. Si no se intersectó con un gizmo, intentar seleccionar un objeto
+                const interObj = raycaster.intersectObjects(objetos);
+                if (interObj.length > 0) {
+                    seleccionarFigura(interObj[0].object); // Selecciona la figura clickeada
+                    controls.enabled = false; // Deshabilita OrbitControls temporalmente para evitar arrastre de cámara al seleccionar
+                    e.preventDefault();
+                    return;
+                }
+
+                // 3. Si no se seleccionó nada nuevo (ni gizmo, ni objeto), deselecciona lo que esté seleccionado
+                if (objetoSeleccionado) {
+                    objetoSeleccionado = null;
+                    eliminarGizmos();
+                    ocultarColorPicker();
+                    actualizarLista();
+                    mostrarToast("🤷‍♂️ Nada seleccionado.");
+                }
+
+            } else if (e.touches.length === 2) {
+                // Con dos dedos, siempre habilita OrbitControls para permitir zoom/pan
+                controls.enabled = true;
+                objetoArrastrando = null; // No arrastrar objetos/gizmos con dos dedos
+            }
+        }, { passive: false }); // `passive: false` es crucial para e.preventDefault()
+
+        render.domElement.addEventListener("touchmove", e => {
+            // Si no estamos tocando, no hay objeto seleccionado, o se usan más de 1 dedo, salimos.
+            // Esto asegura que solo se manejen transformaciones con un solo dedo y un objeto seleccionado.
+            if (!tocando || !objetoSeleccionado || e.touches.length > 1) {
+                // Si no estamos arrastrando un gizmo, y controls.enabled está activado, permitimos que controls gestione el movimiento.
+                // Si el usuario levanta el dedo y vuelve a tocar para mover la cámara, controls.enabled será true.
+                // Si estaba arrastrando un gizmo, controls.enabled es false, por lo que esta condición no se cumpliría.
+                if (!objetoArrastrando && controls.enabled) {
+                    return; // Permite que OrbitControls maneje el movimiento de la cámara.
+                }
+                return; // Sale si las condiciones para transformar no se cumplen.
+            }
+
+            e.preventDefault(); // Evita el scroll/zoom del navegador
+
+            const rect = render.domElement.getBoundingClientRect();
+            const currentTouchX = e.touches[0].clientX;
+            const currentTouchY = e.touches[0].clientY;
+
+            // Solo calculamos deltaPixel si se va a usar (para rotación/escala).
+            // Para traslación, ya usamos el punto 3D directo.
+            let deltaPixelX = 0;
+            let deltaPixelY = 0;
+            if (objetoArrastrando.userData.tipoGizmo === 'rotacion' || objetoArrastrando.userData.tipoGizmo === 'escala') {
+                deltaPixelX = currentTouchX - previousTouchPos.x;
+                deltaPixelY = currentTouchY - previousTouchPos.y;
+            }
+
+            const sensitivity = velocidadMovimiento;
+
+            // No es necesario guardar oldState aquí, se guarda en touchstart antes de iniciar el arrastre
+            // const oldState = { ... };
+
+            if (objetoArrastrando.userData.tipoGizmo === 'traslacion') {
+                const eje = objetoArrastrando.userData.eje;
+                
+                puntero.x = ((currentTouchX - rect.left) / rect.width) * 2 - 1;
+                puntero.y = -((currentTouchY - rect.top) / rect.height) * 2 + 1;
+                raycaster.setFromCamera(puntero, camara);
+
+                const cameraDirection = new THREE.Vector3();
+                camara.getWorldDirection(cameraDirection);
+                const plane = new THREE.Plane();
+                plane.setFromNormalAndCoplanarPoint(cameraDirection, puntoInterseccionInicial3D);
+
+                const nuevaInterseccion3D = new THREE.Vector3();
+                if (!raycaster.ray.intersectPlane(plane, nuevaInterseccion3D)) {
+                    return;
+                }
+
+                const deltaMovimiento3D = new THREE.Vector3().subVectors(nuevaInterseccion3D, puntoInterseccionInicial3D);
+
+                const axisWorld = new THREE.Vector3();
+                if (eje === 'x') axisWorld.set(1, 0, 0);
+                else if (eje === 'y') axisWorld.set(0, 1, 0);
+                else if (eje === 'z') axisWorld.set(0, 0, 1);
+                axisWorld.normalize();
+
+                const moveAmount = deltaMovimiento3D.dot(axisWorld);
+                objetoSeleccionado.position.add(axisWorld.multiplyScalar(moveAmount));
+                puntoInterseccionInicial3D.copy(nuevaInterseccion3D); // ¡Crucial para la continuidad!
+
+                gizmos.forEach(g => {
+                    if (g.userData.tipoGizmo === 'traslacion') {
+                        g.position.copy(objetoSeleccionado.position);
+                    }
+                });
+                console.log(`Trasladando ${eje}: MoveAmount=${moveAmount.toFixed(3)}`);
+
+            } else if (objetoArrastrando.userData.tipoGizmo === 'rotacion') {
+                const eje = objetoArrastrando.userData.eje;
+                const rotationSpeed = sensitivity * 0.005;
+
+                let deltaRotation = 0;
+                let axis = new THREE.Vector3();
+
+                if (eje === 'x') {
+                    axis.set(1, 0, 0);
+                    deltaRotation = -deltaPixelY * rotationSpeed;
+                } else if (eje === 'y') {
+                    axis.set(0, 1, 0);
+                    deltaRotation = deltaPixelX * rotationSpeed;
+                } else if (eje === 'z') {
+                    axis.set(0, 0, 1);
+                    deltaRotation = (deltaPixelX - deltaPixelY) * rotationSpeed;
+                }
+                objetoSeleccionado.rotateOnWorldAxis(axis, deltaRotation);
+                gizmos.filter(g => g.userData.tipoGizmo === 'rotacion').forEach(g => g.position.copy(objetoSeleccionado.position));
+                console.log(`Rotando ${eje}: DeltaX=${deltaPixelX.toFixed(2)}, DeltaY=${deltaPixelY.toFixed(2)}, DeltaRot=${deltaRotation.toFixed(3)}`);
+
+            } else if (objetoArrastrando.userData.tipoGizmo === 'escala') {
+                const scaleSpeed = sensitivity * 0.01;
+                const deltaScale = (deltaPixelX - deltaPixelY) * scaleSpeed;
+
+                const currentScale = objetoSeleccionado.scale.x;
+                let newScale = currentScale + deltaScale;
+                newScale = Math.max(0.01, newScale);
+
+                objetoSeleccionado.scale.set(newScale, newScale, newScale);
+                console.log(`Escalando: DeltaX=${deltaPixelX.toFixed(2)}, DeltaY=${deltaPixelY.toFixed(2)}, NewScale=${newScale.toFixed(3)}`);
+            }
+            // ¡Crucial! Actualiza previousTouchPos al final, incluso si no se usó para el cálculo actual.
+            previousTouchPos.set(currentTouchX, currentTouchY);
+
+        }, { passive: false });
+
+        render.domElement.addEventListener("touchend", () => {
+            tocando = false;
+            if (objetoArrastrando && objetoSeleccionado) { // Asegúrate de que haya un objeto seleccionado antes de registrar
+                const newState = {
+                    position: objetoSeleccionado.position.clone(),
+                    rotation: objetoSeleccionado.rotation.clone(),
+                    scale: objetoSeleccionado.scale.clone()
+                };
+                // Solo registra la acción si el estado ha cambiado significativamente
+                if (ultimoEstadoObjeto && (
+                    !ultimoEstadoObjeto.position.equals(newState.position) ||
+                    !ultimoEstadoObjeto.rotation.equals(newState.rotation) ||
+                    !ultimoEstadoObjeto.scale.equals(newState.scale)
+                )) {
+                    registrarAccion({ type: 'transform', objectId: objetoSeleccionado.uuid, oldState: ultimoEstadoObjeto, newState: newState });
+                }
+                ultimoEstadoObjeto = null;
+                objetoArrastrando = null;
+            }
+            controls.enabled = true; // Vuelve a habilitar OrbitControls después de soltar
+        });
+
+        // --- Historial de Acciones (Undo/Redo) ---
+
+        function registrarAccion(accion) {
+            // Si el índice no está al final, truncar el historial para que las nuevas acciones no se "mezclen"
+            if (indiceHistorial < historial.length - 1) {
+                historial.splice(indiceHistorial + 1);
+            }
+            historial.push(accion);
+            if (historial.length > MAX_HISTORIAL) {
+                historial.shift(); // Elimina la acción más antigua si se excede el límite
+            }
+            indiceHistorial = historial.length - 1; // Mueve el índice a la nueva acción
+            actualizarBotonesUndoRedo();
+        }
+
+        function deshacerAccion() {
+            if (indiceHistorial < 0) {
+                mostrarToast("🤷‍♀️ No hay acciones para deshacer.");
+                return;
+            }
+
+            const accion = historial[indiceHistorial];
+            // Busca el objeto por UUID primero, si no lo encuentra (ej. si fue borrado y se está rehaciendo un borrado)
+            // entonces lo busca por los datos serializados (nombre)
+            const obj = escena.getObjectByProperty('uuid', accion.objectId); // Buscar por UUID si está en la escena
+
+            switch (accion.type) {
+                case 'add':
+                    if (obj) { // Si se deshace un 'add', se elimina el objeto
+                        escena.remove(obj);
+                        objetos.splice(objetos.indexOf(obj), 1);
+                        if (objetoSeleccionado === obj) { // Si era el seleccionado, deseleccionar
+                            objetoSeleccionado = null;
+                            eliminarGizmos();
+                            ocultarColorPicker();
+                        }
+                        actualizarLista();
+                        mostrarToast(`↩ Deshecho: Añadir ${obj.name}`);
+                    }
+                    break;
+                case 'delete':
+                    // Si se deshace un 'delete', se recrea el objeto
+                    if (accion.objectData) {
+                        const newObj = deserializarObjeto(accion.objectData);
+                        escena.add(newObj);
+                        objetos.push(newObj);
+                        actualizarLista();
+                        seleccionarFigura(newObj); // Seleccionar el objeto recién restaurado
+                        mostrarToast(`↩ Deshecho: Eliminar ${newObj.name}`);
+                    }
+                    break;
+                case 'transform':
+                    if (obj && accion.oldState) { // Si se deshace una 'transformación', restaura el estado anterior
+                        obj.position.copy(accion.oldState.position);
+                        obj.rotation.copy(accion.oldState.rotation);
+                        obj.scale.copy(accion.oldState.scale);
+                        if (objetoSeleccionado === obj) {
+                            crearGizmos(obj); // Actualiza los gizmos si el objeto estaba seleccionado
+                        }
+                        mostrarToast(`↩ Deshecho: Mover ${obj.name}`);
+                    }
+                    break;
+                case 'color':
+                    if (obj && accion.oldColor !== undefined) { // Si se deshace un 'color', restaura el color anterior
+                        obj.material.color.set(accion.oldColor);
+                        if (objetoSeleccionado === obj) {
+                            colorPicker.value = "#" + obj.material.color.getHexString(); // Actualiza el color picker
+                        }
+                        mostrarToast(`↩ Deshecho: Color ${obj.name}`);
+                    }
+                    break;
+            }
+            indiceHistorial--; // Mueve el índice hacia atrás
+            actualizarBotonesUndoRedo();
+        }
+
+        function rehacerAccion() {
+            if (indiceHistorial >= historial.length - 1) {
+                mostrarToast("🤷‍♀️ No hay acciones para rehacer.");
+                return;
+            }
+            indiceHistorial++; // Mueve el índice hacia adelante
+            const accion = historial[indiceHistorial];
+            const obj = escena.getObjectByProperty('uuid', accion.objectId);
+
+            switch (accion.type) {
+                case 'add':
+                    // Si se rehace un 'add', se recrea el objeto
+                    if (accion.objectData) {
+                        const newObj = deserializarObjeto(accion.objectData);
+                        escena.add(newObj);
+                        objetos.push(newObj);
+                        actualizarLista();
+                        seleccionarFigura(newObj);
+                        mostrarToast(`↪ Rehaciendo: Añadir ${newObj.name}`);
+                    }
+                    break;
+                case 'delete':
+                    if (obj) { // Si se rehace un 'delete', se elimina el objeto
+                        escena.remove(obj);
+                        objetos.splice(objetos.indexOf(obj), 1);
+                        if (objetoSeleccionado === obj) {
+                            objetoSeleccionado = null;
+                            eliminarGizmos();
+                            ocultarColorPicker();
+                        }
+                        actualizarLista();
+                        mostrarToast(`↪ Rehaciendo: Eliminar ${obj.name}`);
+                    }
+                    break;
+                case 'transform':
+                    if (obj && accion.newState) { // Si se rehace una 'transformación', restaura el estado nuevo
+                        obj.position.copy(accion.newState.position);
+                        obj.rotation.copy(accion.newState.rotation);
+                        obj.scale.copy(accion.newState.scale);
+                        if (objetoSeleccionado === obj) {
+                            crearGizmos(obj);
+                        }
+                        mostrarToast(`↪ Rehaciendo: Mover ${obj.name}`);
+                    }
+                    break;
+                case 'color':
+                    if (obj && accion.newColor !== undefined) { // Si se rehace un 'color', restaura el color nuevo
+                        obj.material.color.set(accion.newColor);
+                        if (objetoSeleccionado === obj) {
+                            colorPicker.value = "#" + obj.material.color.getHexString();
+                        }
+                        mostrarToast(`↪ Rehaciendo: Color ${obj.name}`);
+                    }
+                    break;
+            }
+            actualizarBotonesUndoRedo();
+        }
+
+        function actualizarBotonesUndoRedo() {
+            document.getElementById('btnDeshacer').disabled = indiceHistorial < 0;
+            document.getElementById('btnRehacer').disabled = indiceHistorial >= historial.length - 1;
+        }
+        actualizarBotonesUndoRedo(); // Llamada inicial para establecer el estado de los botones
+
+        // --- Guardar/Cargar Escena ---
+
+        function serializarObjeto(obj) {
+            const data = {
+                uuid: obj.uuid,
+                name: obj.name,
+                type: obj.userData.tipo, // Guarda el tipo de geometría
+                position: obj.position.toArray(),
+                rotation: obj.rotation.toArray(),
+                scale: obj.scale.toArray(),
+                color: obj.material.color.getHex(),
+                // Serializa también los keyframes de animación si existen
+                keyframes: keyframes.has(obj.uuid) ? keyframes.get(obj.uuid).map(v => ({ position: v.position.toArray(), rotation: v.rotation.toArray(), scale: v.scale.toArray() })) : []
+            };
+            return data;
+        }
+
+        function deserializarObjeto(data) {
+            let geo;
+            switch (data.type) {
+                case 'cubo': geo = new THREE.BoxGeometry(1, 1, 1); break;
+                case 'esfera': geo = new THREE.SphereGeometry(0.6, 32, 16); break;
+                case 'cono': geo = new THREE.ConeGeometry(0.5, 1.2, 32); break;
+                case 'cilindro': geo = new THREE.CylinderGeometry(0.5, 0.5, 1.2, 32); break;
+                default: geo = new THREE.BoxGeometry(1, 1, 1); break; // Fallback
+            }
+            const mat = new THREE.MeshStandardMaterial({ color: data.color });
+            const obj = new THREE.Mesh(geo, mat);
+            obj.uuid = data.uuid; // Restaura el UUID original para consistencia
+            obj.name = data.name;
+            obj.position.fromArray(data.position);
+            obj.rotation.fromArray(data.rotation);
+            obj.scale.fromArray(data.scale);
+            obj.userData.tipo = data.type;
+            obj.userData.lastColor = data.color;
+
+            if (data.keyframes && data.keyframes.length > 0) {
+                keyframes.set(obj.uuid, data.keyframes.map(k => ({
+                    position: new THREE.Vector3().fromArray(k.position),
+                    rotation: new THREE.Euler().fromArray(k.rotation),
+                    scale: new THREE.Vector3().fromArray(k.scale)
+                })));
+            }
+            return obj;
+        }
+
+        function guardarEscena() {
+            const data = {
+                objetos: objetos.map(obj => serializarObjeto(obj)),
+                camaraPos: camara.position.toArray(),
+                camaraTarget: controls.target.toArray()
+            };
+            try {
+                localStorage.setItem('infinity3d_scene', JSON.stringify(data));
+                mostrarToast("💾 Escena guardada exitosamente.");
+            } catch (e) {
+                mostrarToast("❌ Error al guardar escena: " + e.message);
+                console.error("Error al guardar escena:", e);
+            }
+        }
+
+        function cargarEscena() {
+            mostrarDialogoConfirmacion('cargar'); // Pide confirmación antes de cargar
+        }
+
+        function confirmarCargarEscena() {
+            try {
+                const dataString = localStorage.getItem('infinity3d_scene');
+                if (!dataString) {
+                    mostrarToast("📂 No hay escenas guardadas.");
+                    return;
+                }
+                reiniciarEscenaSinConfirmacion(); // Limpia la escena actual antes de cargar
+
+                const data = JSON.parse(dataString);
+
+                data.objetos.forEach(objData => {
+                    const obj = deserializarObjeto(objData);
+                    escena.add(obj);
+                    objetos.push(obj);
+                    // Actualiza los contadores de figuras para nombres correctos
+                    const tipo = obj.userData.tipo;
+                    const match = obj.name.match(/\s(\d+)$/);
+                    if (match) {
+                        const num = parseInt(match[1]);
+                        if (contador[tipo] < num) {
+                            contador[tipo] = num;
+                        }
+                    }
+                });
+                actualizarLista();
+
+                if (data.camaraPos && data.camaraTarget) {
+                    camara.position.fromArray(data.camaraPos);
+                    controls.target.fromArray(data.camaraTarget);
+                    controls.update(); // Importante para que OrbitControls reconozca el nuevo target
+                }
+                mostrarToast("✅ Escena cargada exitosamente.");
+                // Limpia el historial al cargar una nueva escena
+                historial.length = 0;
+                indiceHistorial = -1;
+                actualizarBotonesUndoRedo();
+            } catch (e) {
+                mostrarToast("❌ Error al cargar escena. Datos corruptos.");
+                console.error("Error al cargar escena:", e);
+            }
+        }
+
+        function reiniciarEscena() {
+            mostrarDialogoConfirmacion('reiniciar'); // Pide confirmación antes de reiniciar
+        }
+
+        function reiniciarEscenaSinConfirmacion() {
+            while(objetos.length > 0){
+                const obj = objetos.pop();
+                escena.remove(obj);
+            }
+            for (const key in contador) {
+                contador[key] = 0;
+            }
+            objetoSeleccionado = null;
+            eliminarGizmos();
+            ocultarColorPicker();
+            actualizarLista();
+            keyframes.clear(); // Limpia los keyframes de animación
+            animando = false;
+            // Restaura la posición de la cámara y el target a los valores por defecto
+            camara.position.set(0, 4, 8);
+            controls.target.set(0, 1, 0);
+            controls.update();
+            // Limpia el historial
+            historial.length = 0;
+            indiceHistorial = -1;
+            actualizarBotonesUndoRedo();
+            mostrarToast("🆕 Nueva escena creada.");
+        }
+
+
+        // --- Animación ---
+
+        const keyframes = new Map(); // Mapa: UUID del objeto -> Array de keyframes
+        let animando = false, frameActual = 0, totalFrames = 0;
+        let duracionPorFrame = 700; // Milisegundos por transición entre frames
+
+        function agregarFrame() {
+            if (!objetoSeleccionado) {
+                mostrarToast("☝️ Selecciona una figura para añadir un fotograma.");
+                return;
+            }
+            const id = objetoSeleccionado.uuid;
+            if (!keyframes.has(id)) keyframes.set(id, []);
+
+            // Guarda la posición, rotación y escala actuales del objeto
+            keyframes.get(id).push({
+                position: objetoSeleccionado.position.clone(),
+                rotation: objetoSeleccionado.rotation.clone(),
+                scale: objetoSeleccionado.scale.clone()
+            });
+            mostrarToast(`✔️ Fotograma ${keyframes.get(id).length} agregado para ${objetoSeleccionado.name}.`);
+        }
+
+        function reproducirAnimacion() {
+            if (!objetoSeleccionado) {
+                mostrarToast("☝️ Selecciona una figura para animar.");
+                return;
+            }
+            const id = objetoSeleccionado.uuid;
+            const frames = keyframes.get(id);
+            if (!frames || frames.length < 2) {
+                mostrarToast("⚠️ Necesitas al menos 2 fotogramas para animar.");
+                return;
+            }
+            frameActual = 0;
+            totalFrames = frames.length;
+            animando = true;
+            mostrarToast(`▶ Animando ${objetoSeleccionado.name}...`);
+            animarFrame(id); // Inicia la animación
+        }
+
+        function animarFrame(id) {
+            if (!animando) return;
+
+            const frames = keyframes.get(id);
+            if (!frames || frames.length === 0) {
+                animando = false;
+                return;
+            }
+
+            // Define el frame actual y el siguiente (con loop)
+            const actualFrameIndex = frameActual % frames.length;
+            const nextFrameIndex = (frameActual + 1) % frames.length;
+
+            const actualState = frames[actualFrameIndex];
+            const nextState = frames[nextFrameIndex];
+
+            let progreso = 0;
+            const inicio = performance.now(); // Marca de tiempo para calcular el progreso
+
+            function paso(t) {
+                if (!animando) return; // Detener si la animación fue pausada/detenida
+
+                progreso = (t - inicio) / duracionPorFrame;
+                if (progreso >= 1) { // Si el progreso alcanza o supera 1, hemos llegado al siguiente frame
+                    objetoSeleccionado.position.copy(nextState.position);
+                    objetoSeleccionado.rotation.copy(nextState.rotation); // Se puede usar .copy() para Euler directamente
+                    objetoSeleccionado.scale.copy(nextState.scale);
+
+                    frameActual++;
+                    if (frameActual >= totalFrames) { // Si hemos completado un ciclo de todos los frames
+                        animando = false;
+                        mostrarToast("⏸ Animación finalizada.");
+                        return;
+                    }
+                    // Espera un pequeño retraso antes de iniciar el siguiente frame para evitar saltos
+                    setTimeout(() => animarFrame(id), 50);
+                    return;
+                }
+
+                // Interpolación lineal para posición y escala
+                objetoSeleccionado.position.lerpVectors(actualState.position, nextState.position, progreso);
+                objetoSeleccionado.scale.lerpVectors(actualState.scale, nextState.scale, progreso);
+
+                // Interpolación esférica (slerp) para rotación usando cuaterniones
+                const q1 = new THREE.Quaternion().setFromEuler(actualState.rotation);
+                const q2 = new THREE.Quaternion().setFromEuler(nextState.rotation);
+                objetoSeleccionado.quaternion.slerpQuaternions(q1, q2, progreso);
+                objetoSeleccionado.rotation.setFromQuaternion(objetoSeleccionado.quaternion); // Actualiza la rotación Euler
+
+                // Si el objeto animado es el seleccionado, actualiza sus gizmos
+                if (objetoSeleccionado && objetoSeleccionado.uuid === id) {
+                    // No recrear los gizmos, solo actualizarlos si es necesario (ej. traslación/rotación/escala)
+                    // Los gizmos de escala al ser hijos, se actualizan con el objeto.
+                    // Los de traslación/rotación que no son hijos, necesitarán su posición sincronizada.
+                    if (modoTransformacion === 'trasladar' || modoTransformacion === 'rotar') {
+                        // Sincronizar la posición de los gizmos con el objeto seleccionado
+                        gizmos.forEach(g => {
+                            if (!g.parent || g.parent.uuid !== objetoSeleccionado.uuid) { // Solo si no son hijos del objeto
+                                g.position.copy(objetoSeleccionado.position);
+                            }
+                        });
+                    }
+                }
+
+                requestAnimationFrame(paso); // Continúa al siguiente paso de animación
+            }
+
+            requestAnimationFrame(paso); // Inicia el bucle de animación para este frame
+        }
+
+        // --- Exportar Video ---
+
+        function exportarVideo() {
+            // Verificar si el navegador soporta MediaRecorder (para grabar el canvas)
+            if (!window.MediaRecorder) {
+                mostrarToast("❌ Tu navegador no soporta la grabación de video.");
+                return;
+            }
+            if (!objetoSeleccionado || !keyframes.has(objetoSeleccionado.uuid) || keyframes.get(objetoSeleccionado.uuid).length < 2) {
+                mostrarToast("⚠️ Necesitas una figura con al menos 2 fotogramas para exportar.");
+                return;
+            }
+
+            // Crea un stream a partir del canvas de Three.js
+            const stream = render.domElement.captureStream(30); // 30 FPS
+            const grabador = new MediaRecorder(stream);
+            const partes = []; // Almacenará los fragmentos de video grabados
+
+            grabador.ondataavailable = e => partes.push(e.data); // Cuando haya datos, guardarlos
+            grabador.onstop = () => { // Cuando la grabación termina
+                const blob = new Blob(partes, { type: "video/webm" }); // Crea un Blob de video WebM
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a"); // Crea un enlace de descarga
+                a.href = url;
+                a.download = "Infinity3D_Animacion.webm"; // Nombre del archivo
+                document.body.appendChild(a);
+                a.click(); // Simula un clic para descargar
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url); // Libera la URL del objeto
+                mostrarToast("✅ Video exportado.");
+            };
+
+            // Inicia la animación y la grabación simultáneamente
+            reproducirAnimacion();
+            if (animando) { // Solo si la animación realmente se inicia
+                grabador.start();
+                mostrarToast("🎥 Grabando animación...");
+                // Calcula la duración total de la animación para detener la grabación
+                const duracionTotalAnimacion = (totalFrames - 1) * duracionPorFrame;
+
+                // Detiene la grabación un poco después de que la animación termine
+                setTimeout(() => {
+                    if (grabador.state !== "inactive") {
+                        grabador.stop();
+                    }
+                }, duracionTotalAnimacion + 500); // 500ms extra de margen
+            } else {
+                 mostrarToast("⚠️ La animación no pudo comenzar para grabar.");
+            }
+        }
+
+
+        // --- Pantalla Completa ---
+        function activarPantallaCompleta() {
+            const elem = document.documentElement; // Elemento raíz del documento (HTML)
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen();
+            }
+            mostrarToast("⛶ Modo Pantalla Completa");
+        }
+
+        // --- Diálogos de Confirmación ---
+        function mostrarDialogoConfirmacion(accion, obj = null) {
+            accionConfirmacion = { type: accion, obj: obj }; // Guarda la acción y el objeto relacionado
+            dialogoConfirmacion.style.display = 'flex'; // Muestra el overlay
+
+            switch (accion) {
+                case 'reiniciar':
+                    dialogoTitulo.textContent = 'Reiniciar Escena';
+                    dialogoMensaje.textContent = '¿Nueva escena? ¡Se perderán los cambios no guardados!';
+                    break;
+                case 'cargar':
+                    dialogoTitulo.textContent = 'Cargar Escena';
+                    dialogoMensaje.textContent = '¿Cargar escena guardada? ¡La actual se perderá!';
+                    break;
+                case 'eliminar':
+                    dialogoTitulo.textContent = 'Eliminar Figura';
+                    dialogoMensaje.textContent = `¿Eliminar ${obj.name}? ¡No se puede deshacer!`;
+                    break;
+            }
+        }
+
+        btnDialogoSi.onclick = () => {
+            dialogoConfirmacion.style.display = 'none'; // Oculta el diálogo
+            if (accionConfirmacion) {
+                switch (accionConfirmacion.type) {
+                    case 'reiniciar':
+                        reiniciarEscenaSinConfirmacion();
+                        break;
+                    case 'cargar':
+                        confirmarCargarEscena();
+                        break;
+                    case 'eliminar':
+                        confirmarEliminar(accionConfirmacion.obj);
+                        break;
+                }
+                accionConfirmacion = null; // Limpia la acción guardada
+            }
+        };
+
+        btnDialogoNo.onclick = () => {
+            dialogoConfirmacion.style.display = 'none'; // Oculta el diálogo
+            accionConfirmacion = null; // Limpia la acción guardada
+            mostrarToast("🚫 Acción cancelada.");
+        };
+
+        // --- Bucle de Renderizado ---
+        function bucle() {
+            requestAnimationFrame(bucle); // Solicita el siguiente frame de animación
+            controls.update(); // Actualiza los controles de órbita (damping)
+
+            render.render(escena, camara); // Renderiza la escena
+        }
+
+        bucle(); // Inicia el bucle de renderizado
+    </script>
+</body>
+</html>
