@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Infinity3D Mobile - Interfaz 1600x720 Fija</title>
+    <title>Infinity3D Mobile - Interfaz 1000x600 Fija</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -16,13 +16,13 @@
             --color-hover: #5c679a; /* Lighter blue-purple for button hover */
             --color-borde: #283a5e; /* Darker blue-purple for borders */
             --color-sombra: rgba(0,0,0,0.4); /* General shadow color */
-            --border-radius-suave: 4px; /* Smaller rounded corners */
-            --padding-base: 8px; /* Base padding */
-            --gap-base: 6px; /* Base gap */
-            --font-size-sm: 11px; /* Smaller font size for general text */
-            --font-size-md: 12px; /* Medium font size for buttons/labels */
-            --font-size-lg: 14px; /* Larger font size for titles */
-            --font-size-xl: 18px; /* For main titles */
+            --border-radius-suave: 3px; /* Even smaller rounded corners */
+            --padding-base: 6px; /* Reduced base padding */
+            --gap-base: 4px; /* Reduced base gap */
+            --font-size-sm: 9px; /* Smaller font size for general text */
+            --font-size-md: 10px; /* Medium font size for buttons/labels */
+            --font-size-lg: 12px; /* Larger font size for titles */
+            --font-size-xl: 14px; /* For main titles */
         }
 
         html, body {
@@ -46,21 +46,21 @@
         #main-layout {
             display: grid;
             /* Fixed dimensions for the entire application */
-            width: 1600px;
-            height: 720px;
+            width: 1000px; /* Reduced width */
+            height: 600px; /* Reduced height */
             
             /* Define grid columns with fixed widths for sidebars and remaining for canvas */
-            grid-template-columns: 50px 1fr 250px; /* Left Sidebar, Canvas (flexible), Right Panel */
+            grid-template-columns: 40px 1fr 200px; /* Left Sidebar, Canvas (flexible), Right Panel */
             /* Define grid rows with fixed heights for top/bottom bars and remaining for main content */
-            grid-template-rows: 40px 1fr 45px; /* Top Bar, Main Content (flexible), Bottom Bar/Timeline */
+            grid-template-rows: 35px 1fr 35px; /* Top Bar, Main Content (flexible), Bottom Bar/Timeline */
             
             grid-template-areas:
                 "header header header"
                 "sidebar-left canvas-area properties-panel"
                 "timeline timeline timeline";
             
-            box-shadow: 0 0 20px rgba(0,0,0,0.6); /* Overall shadow for the fixed window */
-            border-radius: 8px; /* Overall rounded corners */
+            box-shadow: 0 0 15px rgba(0,0,0,0.6); /* Overall shadow for the fixed window */
+            border-radius: 6px; /* Overall rounded corners */
             overflow: hidden; /* Ensure content stays within the main layout boundaries */
         }
 
@@ -71,10 +71,10 @@
             display: flex;
             justify-content: space-between; /* Align logo left, buttons right */
             align-items: center;
-            padding: var(--padding-base) 15px; /* Adjusted padding */
+            padding: var(--padding-base) 10px; /* Adjusted padding */
             z-index: 100;
-            box-shadow: 0 1px 5px var(--color-sombra); /* Smaller shadow */
-            height: 40px; /* Fixed height for top bar */
+            box-shadow: 0 1px 3px var(--color-sombra); /* Smaller shadow */
+            height: 35px; /* Fixed height for top bar */
             box-sizing: border-box; /* Include padding in height calculation */
         }
 
@@ -82,7 +82,7 @@
             font-size: var(--font-size-xl);
             font-weight: 700;
             color: var(--color-acento); /* Accent color for title */
-            margin-right: 15px;
+            margin-right: 10px;
         }
 
         #top-right-buttons {
@@ -99,8 +99,8 @@
             gap: var(--gap-base);
             padding: var(--padding-base);
             z-index: 100;
-            box-shadow: 0 -1px 5px var(--color-sombra); /* Smaller shadow */
-            height: 45px; /* Fixed height for timeline */
+            box-shadow: 0 -1px 3px var(--color-sombra); /* Smaller shadow */
+            height: 35px; /* Fixed height for timeline */
             box-sizing: border-box;
         }
 
@@ -112,9 +112,9 @@
             flex-direction: column;
             gap: var(--gap-base);
             padding: var(--padding-base);
-            box-shadow: 1px 0 5px var(--color-sombra); /* Smaller shadow */
+            box-shadow: 1px 0 3px var(--color-sombra); /* Smaller shadow */
             z-index: 90;
-            width: 50px; /* Fixed width for icon sidebar */
+            width: 40px; /* Fixed width for icon sidebar */
             align-items: center;
             justify-content: flex-start;
             overflow-y: auto; /* Allow scrolling if many tools */
@@ -122,10 +122,10 @@
         }
 
         #sidebar-left .boton {
-            width: 38px; /* Fixed width for square icon buttons */
-            height: 38px; /* Fixed height for square icon buttons */
+            width: 30px; /* Fixed width for square icon buttons */
+            height: 30px; /* Fixed height for square icon buttons */
             padding: 0; /* Remove padding */
-            font-size: 19px; /* Slightly smaller icon size */
+            font-size: 16px; /* Smaller icon size */
         }
         #sidebar-left .boton.active {
             background: var(--color-acento);
@@ -137,7 +137,7 @@
             background: var(--color-botones);
             color: var(--color-texto);
             border: none;
-            padding: 5px 10px; /* Adjusted padding */
+            padding: 4px 8px; /* Adjusted padding */
             border-radius: var(--border-radius-suave);
             font-size: var(--font-size-md);
             cursor: pointer;
@@ -145,7 +145,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 4px; /* Adjusted gap */
+            gap: 3px; /* Adjusted gap */
             white-space: nowrap;
             box-shadow: 0 1px 2px rgba(0,0,0,0.2); /* Lighter shadow for buttons */
         }
@@ -185,9 +185,9 @@
             color: var(--color-texto);
             padding: var(--padding-base);
             border-radius: var(--border-radius-suave); /* Apply to panel itself */
-            box-shadow: -1px 0 5px var(--color-sombra); /* Smaller shadow */
+            box-shadow: -1px 0 3px var(--color-sombra); /* Smaller shadow */
             z-index: 90;
-            width: 250px; /* Fixed width for properties panel */
+            width: 200px; /* Fixed width for properties panel */
             overflow-y: auto; /* Allow scrolling for content */
             box-sizing: border-box;
         }
@@ -196,14 +196,14 @@
             font-size: var(--font-size-lg);
             color: var(--color-acento);
             margin-top: 0;
-            margin-bottom: 12px; /* Adjusted margin */
-            padding-bottom: 6px; /* Adjusted padding */
+            margin-bottom: 10px; /* Adjusted margin */
+            padding-bottom: 5px; /* Adjusted padding */
             border-bottom: 1px solid var(--color-borde);
         }
 
         .panel-section {
-            margin-bottom: 12px; /* Adjusted margin */
-            padding-bottom: 10px; /* Adjusted padding */
+            margin-bottom: 10px; /* Adjusted margin */
+            padding-bottom: 8px; /* Adjusted padding */
             border-bottom: 1px dashed rgba(255,255,255,0.1); /* Lighter separator */
         }
         .panel-section:last-child {
@@ -213,7 +213,7 @@
 
         .panel-section label {
             display: block;
-            margin-bottom: 4px; /* Adjusted margin */
+            margin-bottom: 3px; /* Adjusted margin */
             font-size: var(--font-size-sm);
             color: var(--color-texto);
         }
@@ -221,11 +221,11 @@
         .input-group {
             display: flex;
             align-items: center;
-            gap: 4px; /* Adjusted gap */
-            margin-bottom: 7px; /* Adjusted margin */
+            gap: 3px; /* Adjusted gap */
+            margin-bottom: 6px; /* Adjusted margin */
         }
         .input-group label {
-            flex-basis: 50px; /* Fixed width for labels like 'X:', 'Y:', 'Z:' */
+            flex-basis: 40px; /* Fixed width for labels like 'X:', 'Y:', 'Z:' */
             margin-bottom: 0;
             text-align: right;
         }
@@ -233,9 +233,9 @@
             flex-grow: 1;
             background: #2a2a4a; /* Darker input background */
             border: 1px solid var(--color-borde);
-            border-radius: 3px; /* Reduced border-radius */
+            border-radius: 2px; /* Reduced border-radius */
             color: var(--color-texto);
-            padding: 4px 6px; /* Adjusted padding */
+            padding: 3px 5px; /* Adjusted padding */
             font-size: var(--font-size-sm); /* Adjusted font size */
             width: auto; /* Allow flex-grow to manage width */
         }
@@ -243,7 +243,7 @@
         /* Estilos para los selectores de color de luz */
         #colorPicker, #ambientLightColorPicker, #pointLightColorPicker, #directionalLightColorPicker {
             width: 100%;
-            height: 28px; /* Adjusted height */
+            height: 22px; /* Adjusted height */
             margin-top: var(--gap-base);
             border: 1px solid var(--color-borde);
             background: #1a1a2e;
@@ -255,10 +255,10 @@
         .config-sub-buttons {
             display: flex;
             justify-content: space-around;
-            margin-bottom: 10px; /* Adjusted margin */
+            margin-bottom: 8px; /* Adjusted margin */
             gap: var(--gap-base);
             border-bottom: 1px solid var(--color-borde);
-            padding-bottom: 6px; /* Adjusted padding */
+            padding-bottom: 5px; /* Adjusted padding */
         }
 
         .sub-config-button {
@@ -266,7 +266,7 @@
             background: var(--color-botones);
             color: var(--color-texto);
             border: none;
-            padding: 5px 10px; /* Adjusted padding */
+            padding: 4px 8px; /* Adjusted padding */
             border-radius: var(--border-radius-suave);
             font-size: var(--font-size-md);
             cursor: pointer;
@@ -289,7 +289,7 @@
         /* Estilos para las nuevas secciones de sub-configuración */
         .config-sub-section {
             display: none;
-            padding-top: 6px; /* Adjusted padding */
+            padding-top: 5px; /* Adjusted padding */
         }
 
         .config-sub-section.active {
@@ -299,8 +299,8 @@
         /* Estilos de los sliders */
         input[type="range"] {
             width: 100%;
-            height: 4px; /* Adjusted height */
-            margin-bottom: 8px; /* Adjusted margin */
+            height: 3px; /* Reduced height */
+            margin-bottom: 6px; /* Adjusted margin */
             background: var(--color-borde);
             border-radius: 2px;
             outline: none;
@@ -311,19 +311,19 @@
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 16px; /* Adjusted size */
-            height: 16px; /* Adjusted size */
+            width: 14px; /* Reduced size */
+            height: 14px; /* Reduced size */
             border-radius: 50%;
             background: var(--color-acento);
             cursor: grab;
             border: 1px solid var(--color-texto);
-            margin-top: -6px;
+            margin-top: -5px;
             box-shadow: 0 0 2px rgba(0,0,0,0.4);
         }
 
         input[type="range"]::-moz-range-thumb {
-            width: 16px; /* Adjusted size */
-            height: 16px; /* Adjusted size */
+            width: 14px; /* Reduced size */
+            height: 14px; /* Reduced size */
             border-radius: 50%;
             background: var(--color-acento);
             cursor: grab;
@@ -333,20 +333,20 @@
         
         hr {
             border-color: #3a3a5e;
-            margin: 10px 0; /* Adjusted margin */
+            margin: 8px 0; /* Adjusted margin */
         }
 
         /* Estilos de los checkboxes */
         .checkbox-container {
             display: flex;
             align-items: center;
-            margin-bottom: 6px; /* Adjusted margin */
-            gap: 6px; /* Adjusted gap */
+            margin-bottom: 5px; /* Adjusted margin */
+            gap: 5px; /* Adjusted gap */
         }
 
         .checkbox-container input[type="checkbox"] {
-            width: 16px; /* Adjusted size */
-            height: 16px; /* Adjusted size */
+            width: 14px; /* Reduced size */
+            height: 14px; /* Reduced size */
             cursor: pointer;
             border: 1px solid var(--color-borde);
             background: var(--color-botones);
@@ -370,7 +370,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: white;
-            font-size: 10px; /* Adjusted font size */
+            font-size: 8px; /* Reduced font size */
         }
 
         /* Etiquetas de valor para sliders */
@@ -378,23 +378,23 @@
             font-size: var(--font-size-sm);
             color: var(--color-acento);
             display: inline-block;
-            margin-left: 4px; /* Adjusted margin */
-            min-width: 30px; /* Adjusted min-width */
+            margin-left: 3px; /* Adjusted margin */
+            min-width: 25px; /* Reduced min-width */
             text-align: right;
             font-weight: 600;
         }
 
         /* --- Estilos para Outliner/Lista de Figuras --- */
         #listaContenido {
-            max-height: 250px; /* Max height for scrollable list */
+            max-height: 200px; /* Max height for scrollable list */
             overflow-y: auto;
             border-radius: var(--border-radius-suave);
             border: 1px solid var(--color-borde);
-            margin-top: 8px; /* Adjusted margin */
+            margin-top: 6px; /* Adjusted margin */
         }
 
         #listaContenido h4 {
-            padding: 6px 10px; /* Adjusted padding */
+            padding: 5px 8px; /* Adjusted padding */
             font-size: var(--font-size-md);
             margin: 0;
             border-bottom: 1px solid var(--color-borde);
@@ -406,7 +406,7 @@
         }
 
         .itemLista {
-            padding: 6px 10px; /* Adjusted padding */
+            padding: 5px 8px; /* Adjusted padding */
             font-size: var(--font-size-md);
             display: flex;
             justify-content: space-between;
@@ -443,13 +443,13 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            padding-right: 6px; /* Adjusted padding */
+            padding-right: 5px; /* Adjusted padding */
         }
 
         .itemLista .botones-item {
             display: flex;
-            gap: 2px; /* Adjusted gap */
-            margin-left: 6px; /* Adjusted margin */
+            gap: 1px; /* Reduced gap */
+            margin-left: 5px; /* Adjusted margin */
         }
 
         .boton-eliminar-item, .boton-renombrar-item, .boton-bloquear-item {
@@ -457,7 +457,7 @@
             color: white;
             border: none;
             border-radius: 2px; /* Adjusted border-radius */
-            padding: 3px 6px; /* Adjusted padding */
+            padding: 2px 5px; /* Adjusted padding */
             font-size: var(--font-size-sm);
             cursor: pointer;
             line-height: 1;
@@ -488,13 +488,13 @@
             background: #33334a;
             color: white;
             border: 1px solid var(--color-acento);
-            padding: 3px 6px; /* Adjusted padding */
+            padding: 2px 5px; /* Adjusted padding */
             font-size: var(--font-size-md);
-            border-radius: 3px;
-            width: calc(100% - 12px); /* Adjusted width */
+            border-radius: 2px;
+            width: calc(100% - 10px); /* Adjusted width */
             box-sizing: border-box;
             position: absolute;
-            left: 6px; /* Adjusted position */
+            left: 5px; /* Adjusted position */
             top: 50%;
             transform: translateY(-50%);
             display: none;
@@ -505,14 +505,14 @@
         #timeline-controls {
             display: flex;
             align-items: center;
-            gap: 8px; /* Adjusted gap */
+            gap: 6px; /* Reduced gap */
         }
 
         #timeline-bar {
             flex-grow: 1;
-            height: 16px; /* Adjusted height */
+            height: 14px; /* Reduced height */
             background: #2a2a4a;
-            border-radius: 3px;
+            border-radius: 2px;
             position: relative;
             cursor: pointer;
         }
@@ -536,11 +536,11 @@
         }
         .timeline-marker span {
             position: absolute;
-            top: 18px; /* Adjusted position */
-            left: -8px; /* Adjusted position */
-            font-size: 9px; /* Adjusted font size */
+            top: 16px; /* Adjusted position */
+            left: -6px; /* Adjusted position */
+            font-size: 8px; /* Smaller font size */
             color: #aaa;
-            width: 16px; /* Adjusted width */
+            width: 12px; /* Adjusted width */
             text-align: center;
         }
 
@@ -549,10 +549,10 @@
             position: fixed;
             left: 50%;
             transform: translateX(-50%);
-            bottom: 55px; /* Adjusted position to be above timeline */
+            bottom: 45px; /* Adjusted position to be above timeline */
             background: rgba(30, 30, 50, 0.95);
             color: var(--color-texto);
-            padding: 8px 12px; /* Adjusted padding */
+            padding: 6px 10px; /* Reduced padding */
             border-radius: var(--border-radius-suave);
             font-size: var(--font-size-md);
             opacity: 0;
@@ -561,7 +561,7 @@
             z-index: 1000;
             white-space: nowrap;
             border: 1px solid var(--color-borde);
-            box-shadow: 0 1px 8px rgba(0,0,0,0.5); /* Adjusted shadow */
+            box-shadow: 0 1px 6px rgba(0,0,0,0.5); /* Reduced shadow */
         }
         #toast.mostrar {
             opacity: 1;
@@ -586,23 +586,23 @@
         .dialogo {
             background: var(--fondo-secundario);
             color: var(--color-texto);
-            padding: 15px; /* Adjusted padding */
+            padding: 12px; /* Reduced padding */
             border-radius: var(--border-radius-suave);
             text-align: center;
-            box-shadow: 0 4px 15px var(--color-sombra); /* Adjusted shadow */
-            max-width: 80%; /* Adjusted max-width */
+            box-shadow: 0 3px 12px var(--color-sombra); /* Reduced shadow */
+            max-width: 70%; /* Adjusted max-width */
             border: 1px solid var(--color-borde);
         }
 
         .dialogo h3 {
-            margin-bottom: 10px; /* Adjusted margin */
-            font-size: 16px; /* Adjusted font size */
+            margin-bottom: 8px; /* Reduced margin */
+            font-size: 14px; /* Reduced font size */
             color: var(--color-acento);
             font-weight: 700;
         }
 
         .dialogo p {
-            margin-bottom: 15px; /* Adjusted margin */
+            margin-bottom: 12px; /* Reduced margin */
             font-size: var(--font-size-md);
         }
 
@@ -610,11 +610,11 @@
             background: var(--color-acento);
             color: white;
             border: none;
-            padding: 6px 12px; /* Adjusted padding */
-            border-radius: 3px; /* Adjusted border-radius */
+            padding: 5px 10px; /* Reduced padding */
+            border-radius: 2px; /* Reduced border-radius */
             font-size: var(--font-size-md);
             cursor: pointer;
-            margin: 0 6px; /* Adjusted margin */
+            margin: 0 5px; /* Reduced margin */
             transition: background 0.2s ease, transform 0.1s ease;
             box-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
@@ -632,13 +632,13 @@
         .modo-transformacion, .modo-visualizacion {
             display: flex;
             justify-content: space-around;
-            margin-top: 10px; /* Adjusted margin */
+            margin-top: 8px; /* Reduced margin */
             gap: var(--gap-base);
         }
 
         .modo-transformacion button, .modo-visualizacion button {
             flex-grow: 1;
-            padding: 5px 10px; /* Adjusted padding */
+            padding: 4px 8px; /* Reduced padding */
             border-radius: var(--border-radius-suave);
             font-size: var(--font-size-md);
             background: var(--color-botones);
@@ -996,7 +996,7 @@
         const skyboxCheckbox = document.getElementById("skyboxCheckbox");
         const directionalLightIntensitySlider = document.getElementById("directionalLightIntensitySlider");
         const directionalLightIntensityLabel = document.getElementById("directionalLightIntensityLabel");
-        const directionalLightColorPicker = document.getElementById("directionalLightColorPicker");
+        const directionalLightColorPicker = document = document.getElementById("directionalLightColorPicker");
 
         // Axes and Grid Helpers checkboxes
         const axesHelperCheckbox = document.getElementById("axesHelperCheckbox");
@@ -2203,7 +2203,7 @@
         }
 
         // --- Gizmos de Transformación ---
-        const ESCALA_GIZMO = 0.5; /* Even more reduced gizmo scale */
+        const ESCALA_GIZMO = 0.4; /* Even more reduced gizmo scale */
 
         function crearGizmosTraslacion(obj) {
             const colores = [0xff0000, 0x00ff00, 0x0000ff];
@@ -2217,13 +2217,13 @@
             for (let i = 0; i < 3; i++) {
                 const grupo = new THREE.Group();
                 const barra = new THREE.Mesh(
-                    new THREE.CylinderGeometry(0.015 * ESCALA_GIZMO, 0.015 * ESCALA_GIZMO, 0.8 * ESCALA_GIZMO, 8),
+                    new THREE.CylinderGeometry(0.012 * ESCALA_GIZMO, 0.012 * ESCALA_GIZMO, 0.7 * ESCALA_GIZMO, 8), /* Reduced size */
                     new THREE.MeshBasicMaterial({ color: colores[i], transparent: true, opacity: 0.8 }));
-                barra.position.y = 0.4 * ESCALA_GIZMO;
+                barra.position.y = 0.35 * ESCALA_GIZMO; /* Reduced position */
                 const punta = new THREE.Mesh(
-                    new THREE.ConeGeometry(0.05 * ESCALA_GIZMO, 0.15 * ESCALA_GIZMO, 8),
+                    new THREE.ConeGeometry(0.04 * ESCALA_GIZMO, 0.12 * ESCALA_GIZMO, 8), /* Reduced size */
                     new THREE.MeshBasicMaterial({ color: colores[i], transparent: true, opacity: 0.8 }));
-                punta.position.y = 0.9 * ESCALA_GIZMO;
+                punta.position.y = 0.8 * ESCALA_GIZMO; /* Reduced position */
                 grupo.add(barra);
                 grupo.add(punta);
 
@@ -2248,11 +2248,11 @@
             const size = new THREE.Vector3();
             bbox.getSize(size);
             const maxDim = Math.max(size.x, size.y, size.z);
-            const radioAnillo = maxDim * 0.5 * ESCALA_GIZMO; /* Adjusted ring radius */
+            const radioAnillo = maxDim * 0.4 * ESCALA_GIZMO; /* Adjusted ring radius */
 
             for (let i = 0; i < 3; i++) {
                 const anillo = new THREE.Mesh(
-                    new THREE.TorusGeometry(radioAnillo, 0.01 * ESCALA_GIZMO, 16, 100), /* Adjusted tube radius */
+                    new THREE.TorusGeometry(radioAnillo, 0.008 * ESCALA_GIZMO, 16, 100), /* Adjusted tube radius */
                     new THREE.MeshBasicMaterial({ color: colores[i], transparent: true, opacity: 0.8, side: THREE.DoubleSide })
                 );
                 anillo.position.copy(obj.position);
@@ -2282,7 +2282,7 @@
                 new THREE.Vector3(-halfSize.x, -halfSize.y, -halfSize.z)
             ];
 
-            const gizmoSize = 0.1 * ESCALA_GIZMO; /* Reduced gizmo size */
+            const gizmoSize = 0.08 * ESCALA_GIZMO; /* Reduced gizmo size */
             for (const posRel of posicionesRelativas) {
                 const cuboGizmo = new THREE.Mesh(
                     new THREE.BoxGeometry(gizmoSize, gizmoSize, gizmoSize),
