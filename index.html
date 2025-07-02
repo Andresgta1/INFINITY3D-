@@ -2,530 +2,264 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Infinity3D Mobile - Interfaz Ultra Compacta</title>
+    <title>Infinity3D Mobile - Compacto (Gizmos Mejorados)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Variables CSS para la nueva paleta de colores y estilos compactos */
-        :root {
-            --fondo-principal: #1a1a2e; /* Deep purple-blue, slightly lighter than image */
-            --fondo-secundario: #16213e; /* Slightly darker purple-blue for panels */
-            --color-acento: #e05d5d; /* Soft red/coral for highlights */
-            --color-texto: #e0e0e0; /* Off-white for text */
-            --color-botones: #3e497a; /* Medium blue-purple for button background */
-            --color-hover: #5c679a; /* Lighter blue-purple for button hover */
-            --color-borde: #283a5e; /* Darker blue-purple for borders */
-            --color-sombra: rgba(0,0,0,0.4); /* General shadow color */
-            --border-radius-suave: 4px; /* Even smaller rounded corners */
-            --padding-base: 5px; /* Reduced base padding */
-            --gap-base: 4px; /* Reduced base gap */
-            --font-size-sm: 10px; /* Smaller font size for general text */
-            --font-size-md: 11px; /* Medium font size for buttons/labels */
-            --font-size-lg: 13px; /* Larger font size for titles */
-            --font-size-xl: 16px; /* For main titles */
-        }
-
         html, body {
             margin: 0;
             padding: 0;
             overflow: hidden;
             width: 100%;
             height: 100%;
-            font-family: 'Inter', sans-serif; /* Fuente moderna y legible */
-            background: var(--fondo-principal);
-            color: var(--color-texto);
-            touch-action: none; /* Deshabilita el comportamiento de desplazamiento predeterminado */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000;
+            touch-action: none; /* Previene el comportamiento de desplazamiento por defecto */
             user-select: none; /* Deshabilita la selección de texto */
             -webkit-tap-highlight-color: transparent; /* Elimina el resplandor de toque en iOS */
         }
 
-        /* Contenedor principal con Grid para el layout */
-        #main-layout {
-            display: grid;
-            grid-template-columns: auto 1fr auto; /* Left Sidebar, Canvas, Right Panel */
-            grid-template-rows: auto 1fr auto; /* Top Bar, Main Content, Bottom Bar/Timeline */
-            grid-template-areas:
-                "header header header"
-                "sidebar-left canvas-area properties-panel"
-                "timeline timeline timeline";
-            height: 100%;
-            width: 100%;
-        }
-
-        /* Estilos para las barras superior e inferior */
-        #barra-superior {
-            grid-area: header;
-            background: var(--fondo-secundario);
+        #barra-inferior, #barra-superior {
+            position: fixed;
+            left: 0;
+            right: 0;
+            background: #1a1a1a;
             display: flex;
-            justify-content: space-between; /* Align logo left, buttons right */
-            align-items: center;
-            padding: var(--padding-base) 10px; /* Adjusted padding */
+            flex-wrap: wrap; /* Permite que los botones se envuelvan si hay muchos */
+            justify-content: center;
+            gap: 3px; /* Espacio MUY reducido entre botones */
+            padding: 3px; /* Padding MUY reducido */
             z-index: 100;
-            box-shadow: 0 1px 5px var(--color-sombra); /* Smaller shadow */
-            min-height: 40px; /* Even smaller height for top bar */
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.4);
         }
 
-        #app-title {
-            font-size: var(--font-size-xl);
-            font-weight: 700;
-            color: var(--color-acento); /* Accent color for title */
-            margin-right: 15px;
-        }
-
-        #top-right-buttons {
-            display: flex;
-            gap: var(--gap-base);
-        }
-        
         #barra-inferior {
-            grid-area: timeline;
-            background: var(--fondo-secundario);
-            display: flex;
-            justify-content: center; /* Center the timeline content */
-            align-items: center;
-            gap: var(--gap-base);
-            padding: var(--padding-base);
-            z-index: 100;
-            box-shadow: 0 -1px 5px var(--color-sombra); /* Smaller shadow */
-            min-height: 45px; /* Even smaller height for timeline */
+            bottom: 0;
         }
 
-        /* Nueva barra lateral izquierda para herramientas */
-        #sidebar-left {
-            grid-area: sidebar-left;
-            background: var(--fondo-secundario);
-            display: flex;
-            flex-direction: column;
-            gap: var(--gap-base);
-            padding: var(--padding-base);
-            box-shadow: 1px 0 5px var(--color-sombra); /* Smaller shadow */
-            z-index: 90;
-            width: 45px; /* Fixed width for icon sidebar */
-            align-items: center;
-            justify-content: flex-start;
-            overflow-y: auto; /* Allow scrolling if many tools */
+        #barra-superior {
+            top: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
         }
 
-        #sidebar-left .boton {
-            width: 35px; /* Fixed width for square icon buttons */
-            height: 35px; /* Fixed height for square icon buttons */
-            padding: 0; /* Remove padding */
-            font-size: 18px; /* Slightly smaller icon size */
-        }
-        #sidebar-left .boton.active {
-            background: var(--color-acento);
-            color: white;
-        }
-
-        /* Estilos generales de los botones */
         .boton, .boton-menu {
-            background: var(--color-botones);
-            color: var(--color-texto);
+            background: #333;
+            color: white;
             border: none;
-            padding: 4px 8px; /* Reduced padding */
-            border-radius: var(--border-radius-suave);
-            font-size: var(--font-size-md);
+            padding: 6px 10px; /* Padding MUY compacto */
+            border-radius: 15px; /* Bordes más redondeados */
+            font-size: 11px; /* Fuente MÁS pequeña */
             cursor: pointer;
-            transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            transition: background 0.2s ease, transform 0.1s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 3px; /* Reduced gap */
-            white-space: nowrap;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2); /* Lighter shadow for buttons */
+            gap: 3px; /* Espacio MÁS reducido para íconos/texto */
+            white-space: nowrap; /* Evita que el texto del botón se rompa */
         }
 
         .boton:hover, .boton-menu:hover {
-            background: var(--color-hover);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3); /* Smaller shadow on hover */
+            background: #555;
         }
 
         .boton:active, .boton-menu:active {
             transform: scale(0.98);
-            background: var(--color-acento);
-            box-shadow: inset 0 0 2px rgba(0,0,0,0.3); /* Smaller inner shadow */
-        }
-        
-        .boton:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            background: #2a2a4a;
-            box-shadow: none;
-            transform: none;
         }
 
-        /* Estilos del Canvas de renderizado */
         canvas {
-            grid-area: canvas-area;
-            width: 100%;
-            height: 100%;
-            display: block;
-            background: #22223b; /* Fondo del visor */
-        }
-
-        /* Panel de Propiedades (derecho) */
-        #properties-panel {
-            grid-area: properties-panel;
-            background: var(--fondo-secundario);
-            color: var(--color-texto);
-            padding: var(--padding-base);
-            border-radius: var(--border-radius-suave); /* Apply to panel itself */
-            box-shadow: -1px 0 5px var(--color-sombra); /* Smaller shadow */
-            z-index: 90;
-            width: 220px; /* Fixed width for properties panel */
-            overflow-y: auto; /* Allow scrolling for content */
-        }
-
-        #properties-panel h3 {
-            font-size: var(--font-size-lg);
-            color: var(--color-acento);
-            margin-top: 0;
-            margin-bottom: 10px; /* Reduced margin */
-            padding-bottom: 5px; /* Reduced padding */
-            border-bottom: 1px solid var(--color-borde);
-        }
-
-        .panel-section {
-            margin-bottom: 10px; /* Reduced margin */
-            padding-bottom: 8px; /* Reduced padding */
-            border-bottom: 1px dashed rgba(255,255,255,0.1); /* Lighter separator */
-        }
-        .panel-section:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-
-        .panel-section label {
-            display: block;
-            margin-bottom: 3px; /* Reduced margin */
-            font-size: var(--font-size-sm);
-            color: var(--color-texto);
-        }
-
-        .input-group {
-            display: flex;
-            align-items: center;
-            gap: 3px; /* Reduced gap */
-            margin-bottom: 6px; /* Reduced margin */
-        }
-        .input-group label {
-            flex-basis: 40px; /* Fixed width for labels like 'X:', 'Y:', 'Z:' */
-            margin-bottom: 0;
-            text-align: right;
-        }
-        .input-group input[type="number"] {
-            flex-grow: 1;
-            background: #2a2a4a; /* Darker input background */
-            border: 1px solid var(--color-borde);
-            border-radius: 3px; /* Reduced border-radius */
-            color: var(--color-texto);
-            padding: 3px 5px; /* Reduced padding */
-            font-size: var(--font-size-sm); /* Reduced font size */
-            width: auto; /* Allow flex-grow to manage width */
-        }
-
-        /* Estilos para los selectores de color de luz */
-        #colorPicker, #ambientLightColorPicker, #pointLightColorPicker, #directionalLightColorPicker {
-            width: 100%;
-            height: 25px; /* Reduced height */
-            margin-top: var(--gap-base);
-            border: 1px solid var(--color-borde);
-            background: #1a1a2e;
-            border-radius: var(--border-radius-suave);
-            cursor: pointer;
-        }
-
-        /* Estilos para los nuevos botones de sub-configuración (General, Modos, Material, Outliner) */
-        .config-sub-buttons {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 10px; /* Reduced margin */
-            gap: var(--gap-base);
-            border-bottom: 1px solid var(--color-borde);
-            padding-bottom: 6px; /* Reduced padding */
-        }
-
-        .sub-config-button {
-            flex-grow: 1;
-            background: var(--color-botones);
-            color: var(--color-texto);
-            border: none;
-            padding: 4px 8px; /* Reduced padding */
-            border-radius: var(--border-radius-suave);
-            font-size: var(--font-size-md);
-            cursor: pointer;
-            transition: background 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-
-        .sub-config-button:hover {
-            background: var(--color-hover);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        }
-
-        .sub-config-button.active {
-            background: var(--color-acento);
-            font-weight: 600;
-            color: white;
-            box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
-        }
-
-        /* Estilos para las nuevas secciones de sub-configuración */
-        .config-sub-section {
-            display: none;
-            padding-top: 6px; /* Reduced padding */
-        }
-
-        .config-sub-section.active {
-            display: block;
-        }
-
-        /* Estilos de los sliders */
-        input[type="range"] {
-            width: 100%;
-            height: 4px; /* Reduced height */
-            margin-bottom: 8px; /* Reduced margin */
-            background: var(--color-borde);
-            border-radius: 2px;
-            outline: none;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 16px; /* Reduced size */
-            height: 16px; /* Reduced size */
-            border-radius: 50%;
-            background: var(--color-acento);
-            cursor: grab;
-            border: 1px solid var(--color-texto);
-            margin-top: -6px;
-            box-shadow: 0 0 2px rgba(0,0,0,0.4);
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 16px; /* Reduced size */
-            height: 16px; /* Reduced size */
-            border-radius: 50%;
-            background: var(--color-acento);
-            cursor: grab;
-            border: 1px solid var(--color-texto);
-            box-shadow: 0 0 2px rgba(0,0,0,0.4);
-        }
-        
-        hr {
-            border-color: #3a3a5e;
-            margin: 10px 0; /* Reduced margin */
-        }
-
-        /* Estilos de los checkboxes */
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 6px; /* Reduced margin */
-            gap: 6px; /* Reduced gap */
-        }
-
-        .checkbox-container input[type="checkbox"] {
-            width: 16px; /* Reduced size */
-            height: 16px; /* Reduced size */
-            cursor: pointer;
-            border: 1px solid var(--color-borde);
-            background: var(--color-botones);
-            appearance: none;
-            -webkit-appearance: none;
-            position: relative;
-            border-radius: 2px; /* Reduced border-radius */
-            transition: background 0.2s ease, border-color 0.2s ease;
-        }
-
-        .checkbox-container input[type="checkbox"]:checked {
-            background: var(--color-acento);
-            border-color: var(--color-acento);
-        }
-        
-        .checkbox-container input[type="checkbox"]:checked::after {
-            content: '✔';
-            display: block;
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 10px; /* Reduced font size */
+            left: 0;
+            /* La altura y el 'top' se establecerán con JavaScript para llenar el espacio */
         }
 
-        /* Etiquetas de valor para sliders */
-        .slider-value-label {
-            font-size: var(--font-size-sm);
-            color: var(--color-acento);
-            display: inline-block;
-            margin-left: 4px; /* Reduced margin */
-            min-width: 30px; /* Reduced min-width */
-            text-align: right;
-            font-weight: 600;
+        /* Paneles flotantes */
+        .panel {
+            position: fixed;
+            background: rgba(40, 40, 40, 0.9); /* Fondo un poco menos opaco */
+            color: white;
+            padding: 8px; /* Padding MUY reducido */
+            border-radius: 8px; /* Más compacto */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+            backdrop-filter: blur(3px); /* Desenfoque sutil */
+            -webkit-backdrop-filter: blur(3px);
+        }
+
+        #colorBox {
+            top: 50px; /* Ajustado para no colisionar con la barra superior */
+            right: 5px; /* Posición compacta */
+            width: 160px; /* Más estrecho */
+            padding: 6px; /* Ajustado */
+        }
+
+        #colorPicker {
+            width: 100%;
+            height: 30px; /* Más compacto */
+        }
+
+        /* Estilos específicos para AmbientLightPicker */
+        #ambientLightColorPicker, #pointLightColorPicker {
+            width: 100%;
+            height: 30px; /* Más compacto */
+            margin-top: 3px; /* Margen reducido */
+        }
+
+        #configBox {
+            top: 50px; /* Ajustado */
+            left: 5px; /* Posición compacta */
+            width: 200px; /* Más estrecho para más controles */
+            padding: 6px; /* Ajustado */
+        }
+
+        #configBox label {
+            margin-bottom: 3px; /* Margen MUY reducido */
+            font-size: 12px; /* Más pequeño */
+            display: block; /* Asegura que cada label esté en su propia línea */
+        }
+
+        #configBox input[type="range"] {
+            width: 100%; /* Asegura que ocupa todo el ancho */
+            height: 5px; /* Más delgado */
+            margin-bottom: 6px; /* Espacio debajo del slider */
+        }
+
+        #configBox input[type="range"]::-webkit-slider-thumb {
+            width: 16px; /* Más pequeño */
+            height: 16px; /* Más pequeño */
+        }
+
+        #configBox input[type="range"]::-moz-range-thumb {
+            width: 16px; /* Más pequeño */
+            height: 16px; /* Más pequeño */
+        }
+        
+        #configBox .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px; /* Reducido */
+            gap: 4px; /* Reducido */
+        }
+
+        #configBox .checkbox-container input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin-right: 3px;
+            cursor: pointer;
+        }
+
+        #velocidadLabel, #animSpeedLabel, #ambientLightIntensityLabel, #pointLightIntensityLabel, #pointLightDistanceLabel {
+            font-size: 11px; /* Más pequeño */
         }
 
         /* --- Estilos para Outliner/Lista de Figuras --- */
-        #listaContenido {
-            max-height: 250px; /* Max height for scrollable list */
-            overflow-y: auto;
-            border-radius: var(--border-radius-suave);
-            border: 1px solid var(--color-borde);
-            margin-top: 8px; /* Reduced margin */
+        #listaBox {
+            top: 100px; /* Ajustado para no chocar y ser más compacto */
+            left: 5px;
+            max-height: 200px; /* Máx. altura reducida */
+            width: 200px; /* Más estrecho */
+            padding: 0;
+            overflow-y: auto; /* Para scroll si hay muchos elementos */
         }
 
-        #listaContenido h4 {
-            padding: 6px 10px; /* Reduced padding */
-            font-size: var(--font-size-md);
+        #listaBox h3 {
+            padding: 6px 8px; /* Reducido */
+            font-size: 14px; /* Más pequeño */
             margin: 0;
-            border-bottom: 1px solid var(--color-borde);
-            background: #1a1a2e;
-            position: sticky;
+            border-bottom: 1px solid #444;
+            background: #2a2a2a; /* Fondo para el título */
+            position: sticky; /* Sticky header */
             top: 0;
             z-index: 1;
-            font-weight: 600;
         }
 
         .itemLista {
-            padding: 6px 10px; /* Reduced padding */
-            font-size: var(--font-size-md);
+            padding: 6px 8px; /* Reducido */
+            font-size: 12px; /* Más pequeño */
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #283a5e;
+            border-bottom: 1px solid #333;
             cursor: pointer;
-            position: relative;
-            transition: background 0.1s ease;
+            position: relative; /* Para el input de renombrar */
         }
         .itemLista:last-child {
             border-bottom: none;
         }
         .itemLista:hover {
-            background: #22223b;
+            background: #555;
         }
         .itemLista.seleccionado {
-            background: var(--color-acento);
-            font-weight: 600;
-            color: white;
+            background: #007bff;
+            font-weight: bold;
         }
         .itemLista.bloqueado {
-            opacity: 0.7;
+            opacity: 0.6;
             cursor: not-allowed;
-            background: #2a2a4a;
-            color: #b0b0b0;
         }
         .itemLista.bloqueado .botones-item button {
             pointer-events: none;
-            opacity: 0.4;
+            opacity: 0.5;
         }
 
         .itemLista .nombre-item {
-            flex-grow: 1;
+            flex-grow: 1; /* Ocupa el espacio disponible */
             white-space: nowrap;
             overflow: hidden;
-            text-overflow: ellipsis;
-            padding-right: 6px; /* Reduced padding */
+            text-overflow: ellipsis; /* Puntos suspensivos si el nombre es muy largo */
         }
 
         .itemLista .botones-item {
             display: flex;
-            gap: 2px; /* Reduced gap */
-            margin-left: 6px; /* Reduced margin */
+            gap: 3px; /* Reducido */
+            margin-left: 4px; /* Reducido */
         }
 
         .boton-eliminar-item, .boton-renombrar-item, .boton-bloquear-item {
-            background: #4a4a6a;
+            background: #dc3545;
             color: white;
             border: none;
-            border-radius: 2px; /* Reduced border-radius */
-            padding: 3px 6px; /* Reduced padding */
-            font-size: var(--font-size-sm);
+            border-radius: 3px;
+            padding: 2px 5px; /* Más pequeño */
+            font-size: 10px; /* Más pequeño */
             cursor: pointer;
-            line-height: 1;
-            transition: background 0.2s ease;
+            line-height: 1; /* Asegura que el texto esté centrado */
         }
         .boton-eliminar-item:hover {
-            background: #d9534f;
+            background: #c82333;
         }
         .boton-renombrar-item {
-            background: #4a4a6a;
+            background: #28a745; /* Color verde para renombrar */
         }
         .boton-renombrar-item:hover {
-            background: #5cb85c;
+            background: #218838;
         }
         .boton-bloquear-item {
-            background: #4a4a6a;
-            color: var(--color-texto);
+            background: #ffc107; /* Amarillo para bloquear */
+            color: #333;
         }
-        .boton-bloquear-item.active {
-            background: var(--color-acento);
+        .boton-bloquear-item.activo { /* Cuando está bloqueado */
+            background: #17a2b8; /* Azul claro */
             color: white;
         }
         .boton-bloquear-item:hover {
-            background: #7a7a9a;
+            background: #e0a800;
         }
+
 
         .itemLista input[type="text"] {
-            background: #33334a;
+            background: #444;
             color: white;
-            border: 1px solid var(--color-acento);
-            padding: 3px 6px; /* Reduced padding */
-            font-size: var(--font-size-md);
+            border: 1px solid #666;
+            padding: 3px; /* Más pequeño */
+            font-size: 12px; /* Más pequeño */
             border-radius: 3px;
-            width: calc(100% - 12px); /* Adjusted width */
-            box-sizing: border-box;
+            width: calc(100% - 8px); /* Ajusta el ancho */
+            box-sizing: border-box; /* Incluye padding y border en el width */
             position: absolute;
-            left: 6px; /* Adjusted position */
+            left: 4px;
             top: 50%;
             transform: translateY(-50%);
-            display: none;
-            z-index: 2;
-        }
-
-        /* Timeline specific styles */
-        #timeline-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px; /* Reduced gap */
-        }
-
-        #timeline-bar {
-            flex-grow: 1;
-            height: 16px; /* Reduced height */
-            background: #2a2a4a;
-            border-radius: 3px;
-            position: relative;
-            cursor: pointer;
-        }
-
-        #timeline-playhead {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 2px;
-            height: 100%;
-            background: var(--color-acento);
-            pointer-events: none;
-        }
-
-        .timeline-marker {
-            position: absolute;
-            top: 0;
-            width: 1px;
-            height: 100%;
-            background: rgba(255,255,255,0.2);
-        }
-        .timeline-marker span {
-            position: absolute;
-            top: 18px; /* Adjusted position */
-            left: -8px; /* Adjusted position */
-            font-size: 9px; /* Smaller font size */
-            color: #aaa;
-            width: 16px; /* Adjusted width */
-            text-align: center;
+            display: none; /* Oculto por defecto */
         }
 
         /* Toast/Notificación */
@@ -533,299 +267,214 @@
             position: fixed;
             left: 50%;
             transform: translateX(-50%);
-            bottom: 55px; /* Adjusted position to be above timeline */
-            background: rgba(30, 30, 50, 0.95);
-            color: var(--color-texto);
-            padding: 8px 12px; /* Reduced padding */
-            border-radius: var(--border-radius-suave);
-            font-size: var(--font-size-md);
+            bottom: 55px; /* Encima de la barra inferior (ajustado) */
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 12px; /* Reducido */
+            border-radius: 5px; /* Más pequeño */
+            font-size: 12px; /* Más pequeño */
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
             z-index: 1000;
             white-space: nowrap;
-            border: 1px solid var(--color-borde);
-            box-shadow: 0 1px 8px rgba(0,0,0,0.5); /* Reduced shadow */
         }
         #toast.mostrar {
             opacity: 1;
             visibility: visible;
         }
 
-        /* Overlays y diálogos de confirmación */
+        /* Overlays y diálogos */
         .overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.7);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 500;
-            display: none;
+            display: none; /* Oculto por defecto */
         }
 
         .dialogo {
-            background: var(--fondo-secundario);
-            color: var(--color-texto);
-            padding: 15px; /* Reduced padding */
-            border-radius: var(--border-radius-suave);
+            background: #282828;
+            color: white;
+            padding: 15px; /* Reducido */
+            border-radius: 6px; /* Más compacto */
             text-align: center;
-            box-shadow: 0 4px 15px var(--color-sombra); /* Reduced shadow */
-            max-width: 80%; /* Adjusted max-width */
-            border: 1px solid var(--color-borde);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            max-width: 90%; /* Ajuste para móviles */
         }
 
         .dialogo h3 {
-            margin-bottom: 10px; /* Reduced margin */
-            font-size: 16px; /* Reduced font size */
-            color: var(--color-acento);
-            font-weight: 700;
+            margin-bottom: 10px; /* Reducido */
+            font-size: 16px; /* Más pequeño */
+            color: #eee;
         }
 
         .dialogo p {
-            margin-bottom: 15px; /* Reduced margin */
-            font-size: var(--font-size-md);
+            margin-bottom: 15px;
+            font-size: 13px;
         }
 
         .dialogo-botones button {
-            background: var(--color-acento);
+            background: #007bff;
             color: white;
             border: none;
-            padding: 6px 12px; /* Reduced padding */
-            border-radius: 3px; /* Reduced border-radius */
-            font-size: var(--font-size-md);
+            padding: 6px 12px; /* Reducido */
+            border-radius: 5px; /* Más compacto */
+            font-size: 12px; /* Más pequeño */
             cursor: pointer;
-            margin: 0 6px; /* Reduced margin */
-            transition: background 0.2s ease, transform 0.1s ease;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            margin: 0 6px; /* Reducido */
+            transition: background 0.2s ease;
         }
         .dialogo-botones button:hover {
-            background: #c04a4a;
+            background: #0056b3;
         }
         .dialogo-botones button:last-child {
-            background: #5a6268;
+            background: #6c757d;
         }
         .dialogo-botones button:last-child:hover {
-            background: #4a5055;
+            background: #5a6268;
         }
 
-        /* Estilos para los modos de transformación y visualización */
-        .modo-transformacion, .modo-visualizacion {
+        /* Estilos para los modos de transformación */
+        .modo-transformacion {
             display: flex;
             justify-content: space-around;
-            margin-top: 10px; /* Reduced margin */
-            gap: var(--gap-base);
+            margin-top: 8px; /* Reducido */
+            gap: 4px; /* Espacio reducido */
         }
 
-        .modo-transformacion button, .modo-visualizacion button {
+        .modo-transformacion button {
             flex-grow: 1;
-            padding: 4px 8px; /* Reduced padding */
-            border-radius: var(--border-radius-suave);
-            font-size: var(--font-size-md);
-            background: var(--color-botones);
-            color: var(--color-texto);
-            border: none;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            padding: 5px 8px; /* Reducido */
+            border-radius: 5px; /* Más compacto */
+            font-size: 11px; /* Más pequeño */
+            background: #444;
         }
-        .modo-transformacion button.active, .modo-visualizacion button.active {
-            background: var(--color-acento);
-            font-weight: 600;
-            color: white;
-            box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
+        .modo-transformacion button.activo {
+            background: #007bff;
+            font-weight: bold;
+        }
+
+        /* Estilos para los modos de visualización */
+        .modo-visualizacion {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 8px; /* Reducido */
+            gap: 4px; /* Reducido */
+        }
+        .modo-visualizacion button {
+            flex-grow: 1;
+            padding: 5px 8px; /* Reducido */
+            border-radius: 5px; /* Reducido */
+            font-size: 11px; /* Más pequeño */
+            background: #444;
+        }
+        .modo-visualizacion button.activo {
+            background: #007bff;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div id="main-layout">
-        <!-- Top Bar -->
-        <div id="barra-superior">
-            <div id="app-title">Infinity3D</div>
-            <div id="top-right-buttons">
-                <button class="boton" onclick="reiniciarEscena()">🔄 Nuevo</button>
-                <button class="boton" onclick="guardarEscena()">💾 Guardar</button>
-                <button class="boton" onclick="cargarEscena()">📂 Cargar</button>
-                <button class="boton" onclick="activarPantallaCompleta()">⛶ Fullscreen</button>
-                <button class="boton" onclick="deshacerAccion()" id="btnDeshacer">↩ Deshacer</button>
-                <button class="boton" onclick="rehacerAccion()" id="btnRehacer">↪ Rehacer</button>
-            </div>
+    <div id="barra-superior">
+        <button class="boton" onclick="mostrarPanel('configBox')">⚙️ Config</button>
+        <button class="boton" onclick="activarPantallaCompleta()">⛶ Fullscreen</button>
+        <button class="boton" onclick="guardarEscena()">💾 Guardar</button>
+        <button class="boton" onclick="cargarEscena()">📂 Cargar</button>
+        <button class="boton" onclick="reiniciarEscena()">🔄 Nueva</button>
+        <button class="boton" onclick="deshacerAccion()" id="btnDeshacer">↩ Deshacer</button>
+        <button class="boton" onclick="rehacerAccion()" id="btnRehacer">↪ Rehacer</button>
+    </div>
+
+    <canvas id="renderCanvas"></canvas>
+
+    <div id="barra-inferior">
+        <button class="boton" onclick="agregarFigura('cubo')">+ Cubo</button>
+        <button class="boton" onclick="agregarFigura('esfera')">+ Esfera</button>
+        <button class="boton" onclick="agregarFigura('cono')">+ Cono</button>
+        <button class="boton" onclick="agregarFigura('cilindro')">+ Cilindro</button>
+        <button class="boton" onclick="agregarLuzPunto()">💡+ Luz</button>
+        <button class="boton" onclick="duplicarFigura()">📋 Duplicar</button>
+        <button class="boton" onclick="agruparObjetos()">🔗 Agrupar</button>
+        <button class="boton" onclick="desagruparObjetos()">💔 Desagrupar</button>
+        <button class="boton" onclick="resetearTransformacion()">♻️ Resetear</button>
+        <button class="boton" onclick="abrirImportadorModelo()">📥 Modelo</button>
+        <button class="boton" onclick="abrirImportadorTextura()">🏞️ Textura</button>
+        <button class="boton" onclick="centrarFigura()">🎯 Centrar</button>
+        <button class="boton" onclick="mostrarPanel('listaBox')">📋 Outliner</button>
+        <button class="boton" onclick="agregarFrame()">+ Frame</button>
+        <button class="boton" onclick="reproducirAnimacion()">▶ Animar</button>
+        <button class="boton" onclick="exportarVideo()">🎥 Exportar Video</button>
+        <button class="boton" onclick="exportarImagen()">🖼️ Exportar Imagen</button>
+    </div>
+
+    <div id="colorBox" class="panel">
+        <label>🎨 Color Objeto:</label>
+        <input type="color" id="colorPicker" />
+    </div>
+
+    <div id="configBox" class="panel">
+        <label>⚙️ Vel. Movimiento:</label>
+        <input type="range" id="velocidadSlider" min="0.01" max="0.2" step="0.01" value="0.05">
+        <span id="velocidadLabel">0.05</span>
+        <hr style="border-color: #444; margin: 8px 0;">
+        <label>⚡ Vel. Animación:</label>
+        <input type="range" id="animSpeedSlider" min="100" max="2000" step="50" value="700">
+        <span id="animSpeedLabel">700 ms/frame</span>
+        <hr style="border-color: #444; margin: 8px 0;">
+        <label>💡 Luz Ambiental (Intensidad):</label>
+        <input type="range" id="ambientLightIntensitySlider" min="0" max="2" step="0.01" value="0.8">
+        <span id="ambientLightIntensityLabel">0.8</span>
+        <label>💡 Luz Ambiental (Color):</label>
+        <input type="color" id="ambientLightColorPicker" value="#ffffff">
+        <hr style="border-color: #444; margin: 8px 0;">
+        <label>💡 Luz de Punto (Intensidad):</label>
+        <input type="range" id="pointLightIntensitySlider" min="0" max="5" step="0.1" value="1">
+        <span id="pointLightIntensityLabel">1.0</span>
+        <label>💡 Luz de Punto (Distancia):</label>
+        <input type="range" id="pointLightDistanceSlider" min="0" max="20" step="0.5" value="0">
+        <span id="pointLightDistanceLabel">0.0 (infinita)</span>
+        <label>💡 Luz de Punto (Color):</label>
+        <input type="color" id="pointLightColorPicker" value="#ffffff">
+        <hr style="border-color: #444; margin: 8px 0;">
+        <div class="checkbox-container">
+            <label for="skyboxCheckbox">🏞️ Skybox:</label>
+            <input type="checkbox" id="skyboxCheckbox" checked onchange="toggleSkybox(this.checked)">
         </div>
-
-        <!-- Left Sidebar for Tools -->
-        <div id="sidebar-left">
-            <button class="boton active" id="tool-select" onclick="setTool('select')">👆</button>
-            <button class="boton" id="tool-move" onclick="establecerModoTransformacion('trasladar')">↔️</button>
-            <button class="boton" id="tool-rotate" onclick="establecerModoTransformacion('rotar')">🔄</button>
-            <button class="boton" id="tool-scale" onclick="establecerModoTransformacion('escalar')">↖️↘️</button>
-            <hr style="width: 80%; border-color: #3a3a5e;">
-            <button class="boton" onclick="agregarFigura('cubo')">📦</button>
-            <button class="boton" onclick="agregarFigura('esfera')">🌐</button>
-            <button class="boton" onclick="agregarFigura('cono')">🔺</button>
-            <button class="boton" onclick="agregarFigura('cilindro')"> cylindrical_hose</button>
-            <button class="boton" onclick="agregarFigura('toroide')">🍩</button>
-            <button class="boton" onclick="agregarFigura('plano')">🔲</button>
-            <button class="boton" onclick="agregarFigura('capsula')">💊</button>
-            <button class="boton" onclick="agregarLuzPunto()">💡</button>
-            <hr style="width: 80%; border-color: #3a3a5e;">
-            <button class="boton" onclick="duplicarFigura()">📋</button>
-            <button class="boton" onclick="agruparObjetos()">🔗</button>
-            <button class="boton" onclick="desagruparObjetos()">💔</button>
-            <button class="boton" onclick="resetearTransformacion()">♻️</button>
-            <button class="boton" onclick="abrirImportadorModelo()">📥</button>
-            <button class="boton" onclick="abrirImportadorTextura()">🏞️</button>
-            <button class="boton" onclick="centrarFigura()">🎯</button>
-            <button class="boton" onclick="exportarImagen()">🖼️</button>
-            <button class="boton" onclick="exportarVideo()">🎥</button>
+        <hr style="border-color: #444; margin: 8px 0;">
+        <label>🎚 Modo Transformación:</label>
+        <div class="modo-transformacion">
+            <button id="btnModoTrasladar" onclick="establecerModoTransformacion('trasladar')" class="activo">Mover</button>
+            <button id="btnModoRotar" onclick="establecerModoTransformacion('rotar')">Rotar</button>
+            <button id="btnModoEscalar" onclick="establecerModoTransformacion('escalar')">Escalar</button>
         </div>
-
-        <!-- Main Canvas Area -->
-        <canvas id="renderCanvas"></canvas>
-
-        <!-- Right Properties Panel -->
-        <div id="properties-panel">
-            <!-- Botones para alternar entre sub-secciones de configuración -->
-            <div class="config-sub-buttons">
-                <button class="sub-config-button active" data-target="transformConfig">Transformación</button>
-                <button class="sub-config-button" data-target="objectConfig">Objeto</button>
-                <button class="sub-config-button" data-target="sceneConfig">Escena</button>
-                <button class="sub-config-button" data-target="outlinerConfig">Outliner</button>
-            </div>
-
-            <!-- Sección de Transformación -->
-            <div id="transformConfig" class="config-sub-section active">
-                <h3>Transformación</h3>
-                <div class="panel-section">
-                    <label>Ubicación:</label>
-                    <div class="input-group">
-                        <label>X:</label><input type="number" id="posX" step="0.01">
-                        <label>Y:</label><input type="number" id="posY" step="0.01">
-                        <label>Z:</label><input type="number" id="posZ" step="0.01">
-                    </div>
-                </div>
-                <div class="panel-section">
-                    <label>Rotación (Euler):</label>
-                    <div class="input-group">
-                        <label>X:</label><input type="number" id="rotX" step="0.01">
-                        <label>Y:</label><input type="number" id="rotY" step="0.01">
-                        <label>Z:</label><input type="number" id="rotZ" step="0.01">
-                    </div>
-                </div>
-                <div class="panel-section">
-                    <label>Escala:</label>
-                    <div class="input-group">
-                        <label>X:</label><input type="number" id="scaleX" step="0.01">
-                        <label>Y:</label><input type="number" id="scaleY" step="0.01">
-                        <label>Z:</label><input type="number" id="scaleZ" step="0.01">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sección de Configuración de Objeto (Material/Luz) -->
-            <div id="objectConfig" class="config-sub-section">
-                <h3>Propiedades del Objeto</h3>
-                <div id="object-specific-props">
-                    <!-- Dynamic content based on selected object type -->
-                    <p style="text-align: center; color: #aaa; font-size: var(--font-size-sm);">Selecciona un objeto para ver sus propiedades.</p>
-                </div>
-            </div>
-
-            <!-- Sección de Configuración de Escena -->
-            <div id="sceneConfig" class="config-sub-section">
-                <h3>Configuración de Escena</h3>
-                <div class="panel-section">
-                    <label>⚙️ Vel. Movimiento:</label>
-                    <input type="range" id="velocidadSlider" min="0.01" max="0.2" step="0.01" value="0.05">
-                    <span id="velocidadLabel" class="slider-value-label">0.05</span>
-                </div>
-                <div class="panel-section">
-                    <label>⚡ Vel. Animación:</label>
-                    <input type="range" id="animSpeedSlider" min="100" max="2000" step="50" value="700">
-                    <span id="animSpeedLabel" class="slider-value-label">700 ms/frame</span>
-                </div>
-                <div class="panel-section">
-                    <label>💡 Luz Ambiental (Intensidad):</label>
-                    <input type="range" id="ambientLightIntensitySlider" min="0" max="2" step="0.01" value="0.8">
-                    <span id="ambientLightIntensityLabel" class="slider-value-label">0.8</span>
-                    <label>💡 Luz Ambiental (Color):</label>
-                    <input type="color" id="ambientLightColorPicker" value="#ffffff">
-                </div>
-                <div class="panel-section">
-                    <label>💡 Luz Direccional (Intensidad):</label>
-                    <input type="range" id="directionalLightIntensitySlider" min="0" max="2" step="0.01" value="0.6">
-                    <span id="directionalLightIntensityLabel" class="slider-value-label">0.6</span>
-                    <label>💡 Luz Direccional (Color):</label>
-                    <input type="color" id="directionalLightColorPicker" value="#ffffff">
-                </div>
-                <div class="panel-section">
-                    <div class="checkbox-container">
-                        <label for="skyboxCheckbox">🏞️ Skybox:</label>
-                        <input type="checkbox" id="skyboxCheckbox" checked onchange="toggleSkybox(this.checked)">
-                    </div>
-                </div>
-                <div class="panel-section">
-                    <label>🎚 Modo Transformación:</label>
-                    <div class="modo-transformacion">
-                        <button id="btnModoTrasladar" onclick="establecerModoTransformacion('trasladar')" class="active">Mover</button>
-                        <button id="btnModoRotar" onclick="establecerModoTransformacion('rotar')">Rotar</button>
-                        <button id="btnModoEscalar" onclick="establecerModoTransformacion('escalar')">Escalar</button>
-                    </div>
-                </div>
-                <div class="panel-section">
-                    <label>👁️ Modo Visualización:</label>
-                    <div class="modo-visualizacion">
-                        <button id="btnModoNormal" onclick="establecerModoVisualizacion('normal')" class="active">Normal</button>
-                        <button id="btnModoWireframe" onclick="establecerModoVisualizacion('wireframe')">Alambre</button>
-                        <button id="btnModoBoundingBox" onclick="establecerModoVisualizacion('bbox')">Caja Delim.</button>
-                    </div>
-                </div>
-                <div class="panel-section">
-                    <div class="checkbox-container">
-                        <label for="riggingModeCheckbox">🦴 Rigging Mode:</label>
-                        <input type="checkbox" id="riggingModeCheckbox" onchange="toggleRiggingMode(this.checked)">
-                    </div>
-                    <div class="checkbox-container">
-                        <label for="axesHelperCheckbox">📏 Mostrar Ejes:</label>
-                        <input type="checkbox" id="axesHelperCheckbox" checked onchange="toggleAxesHelper(this.checked)">
-                    </div>
-                    <div class="checkbox-container">
-                        <label for="gridHelperCheckbox">🌐 Mostrar Cuadrícula:</label>
-                        <input type="checkbox" id="gridHelperCheckbox" checked onchange="toggleGridHelper(this.checked)">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sección de Outliner -->
-            <div id="outlinerConfig" class="config-sub-section">
-                <h3>Outliner</h3>
-                <div id="listaContenido"></div>
-            </div>
+        <hr style="border-color: #444; margin: 8px 0;">
+        <label>👁️ Modo Visualización:</label>
+        <div class="modo-visualizacion">
+            <button id="btnModoNormal" onclick="establecerModoVisualizacion('normal')" class="activo">Normal</button>
+            <button id="btnModoWireframe" onclick="establecerModoVisualizacion('wireframe')">Alambre</button>
+            <button id="btnModoBoundingBox" onclick="establecerModoVisualizacion('bbox')">Caja Delim.</button>
         </div>
-
-        <!-- Bottom Timeline Bar -->
-        <div id="barra-inferior">
-            <button class="boton" onclick="reproducirAnimacion()">▶</button>
-            <button class="boton" onclick="agregarFrame()">+ Frame</button>
-            <div id="timeline-controls">
-                <div id="timeline-bar">
-                    <div id="timeline-playhead"></div>
-                    <!-- Markers for timeline -->
-                    <div class="timeline-marker" style="left: 0%;"><span>0</span></div>
-                    <div class="timeline-marker" style="left: 20%;"><span>20</span></div>
-                    <div class="timeline-marker" style="left: 40%;"><span>40</span></div>
-                    <div class="timeline-marker" style="left: 60%;"><span>60</span></div>
-                    <div class="timeline-marker" style="left: 80%;"><span>80</span></div>
-                    <div class="timeline-marker" style="left: 100%;"><span>100</span></div>
-                </div>
-            </div>
+        <hr style="border-color: #444; margin: 8px 0;">
+        <div class="checkbox-container">
+            <label for="riggingModeCheckbox">🦴 Rigging Mode:</label>
+            <input type="checkbox" id="riggingModeCheckbox" onchange="toggleRiggingMode(this.checked)">
         </div>
-    </div> 
-    
-    <!-- Toast/Notificación -->
+    </div>
+
+    <div id="listaBox" class="panel">
+        <h3>📋 Outliner</h3>
+        <div id="listaContenido"></div>
+    </div>
+
     <div id="toast"></div>
 
-    <!-- Diálogo de Confirmación -->
     <div id="dialogoConfirmacion" class="overlay">
         <div class="dialogo">
             <h3 id="dialogoTitulo"></h3>
@@ -845,7 +494,9 @@
         // Inicialización de THREE.js
         const escena = new THREE.Scene();
         const camara = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        // Ahora seleccionamos el canvas por su ID
         const render = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, canvas: document.getElementById('renderCanvas') });
+        // Ya no necesitamos appendChild porque el canvas ya está en el DOM
 
         const controls = new THREE.OrbitControls(camara, render.domElement);
         controls.enableDamping = true;
@@ -864,14 +515,7 @@
         directionalLight.position.set(5, 10, 7.5).normalize();
         escena.add(directionalLight);
 
-        // Axes Helper (Ejes)
-        const axesHelper = new THREE.AxesHelper(5); // Size of the axes
-        axesHelper.visible = true; // Initially visible
-        escena.add(axesHelper);
-
-        // Grid Helper (Cuadrícula)
         const gridHelper = new THREE.GridHelper(10, 10);
-        gridHelper.visible = true; // Initially visible
         escena.add(gridHelper);
 
         // Skybox
@@ -927,12 +571,15 @@
 
 
         function ajustarCanvasSize() {
-            // Con el nuevo layout de grid, el canvas ocupa el espacio automáticamente.
-            // No necesitamos calcular alturas de barras.
-            // Simplemente asegurarse de que el renderizador se ajuste al tamaño del canvas.
-            const canvasElement = document.getElementById('renderCanvas');
-            render.setSize(canvasElement.clientWidth, canvasElement.clientHeight);
-            camara.aspect = canvasElement.clientWidth / canvasElement.clientHeight;
+            const barSuperiorHeight = document.getElementById('barra-superior').offsetHeight;
+            const barInferiorHeight = document.getElementById('barra-inferior').offsetHeight;
+            const availableHeight = window.innerHeight - barSuperiorHeight - barInferiorHeight;
+
+            render.setSize(window.innerWidth, availableHeight);
+            render.domElement.style.top = barSuperiorHeight + 'px';
+            render.domElement.style.height = availableHeight + 'px';
+
+            camara.aspect = window.innerWidth / availableHeight;
             camara.updateProjectionMatrix();
         }
 
@@ -943,63 +590,43 @@
         camara.position.set(0, 4, 8);
 
         const objetos = [];
+        // NUEVO: Array para objetos seleccionados (para agrupar/desagrupar)
         const objetosSeleccionadosMultiples = [];
-        const contador = { cubo: 0, esfera: 0, cono: 0, cilindro: 0, toroide: 0, plano: 0, capsula: 0, modelo: 0, luzPunto: 0, grupo: 0 };
+        const contador = { cubo: 0, esfera: 0, cono: 0, cilindro: 0, modelo: 0, luzPunto: 0, grupo: 0 };
         const raycaster = new THREE.Raycaster();
         const puntero = new THREE.Vector2();
         let previousTouchPos = new THREE.Vector2();
 
         let objetoSeleccionado = null;
         let gizmos = [];
-        let modoTransformacion = 'select'; // Default to select mode
-        let modoVisualizacion = 'normal';
+        let modoTransformacion = 'trasladar';
+        let modoVisualizacion = 'normal'; // NUEVO: Modo de visualización
 
         let riggingModeActivo = false;
 
-        // UI Elements
-        const propertiesPanel = document.getElementById("properties-panel");
-        const objectSpecificProps = document.getElementById("object-specific-props");
-
-        // Transformation inputs
-        const posXInput = document.getElementById("posX");
-        const posYInput = document.getElementById("posY");
-        const posZInput = document.getElementById("posZ");
-        const rotXInput = document.getElementById("rotX");
-        const rotYInput = document.getElementById("rotY");
-        const rotZInput = document.getElementById("rotZ");
-        const scaleXInput = document.getElementById("scaleX");
-        const scaleYInput = document.getElementById("scaleY");
-        const scaleZInput = document.getElementById("scaleZ");
-
-        // Config controls
+        const colorBox = document.getElementById("colorBox");
+        const colorPicker = document.getElementById("colorPicker");
         const slider = document.getElementById("velocidadSlider");
         const velLabel = document.getElementById("velocidadLabel");
+        const listaBox = document.getElementById("listaBox");
+        const listaContenido = document.getElementById("listaContenido");
+        const toast = document.getElementById("toast");
+        const riggingModeCheckbox = document.getElementById("riggingModeCheckbox");
+        
+        // Controles de configuración
         const animSpeedSlider = document.getElementById("animSpeedSlider");
         const animSpeedLabel = document.getElementById("animSpeedLabel");
         const ambientLightIntensitySlider = document.getElementById("ambientLightIntensitySlider");
         const ambientLightIntensityLabel = document.getElementById("ambientLightIntensityLabel");
         const ambientLightColorPicker = document.getElementById("ambientLightColorPicker");
         const skyboxCheckbox = document.getElementById("skyboxCheckbox");
-        const directionalLightIntensitySlider = document.getElementById("directionalLightIntensitySlider");
-        const directionalLightIntensityLabel = document.getElementById("directionalLightIntensityLabel");
-        const directionalLightColorPicker = document.getElementById("directionalLightColorPicker");
+        // NUEVOS CONTROLES DE LUZ DE PUNTO
+        const pointLightIntensitySlider = document.getElementById("pointLightIntensitySlider");
+        const pointLightIntensityLabel = document.getElementById("pointLightIntensityLabel");
+        const pointLightDistanceSlider = document.getElementById("pointLightDistanceSlider");
+        const pointLightDistanceLabel = document.getElementById("pointLightDistanceLabel");
+        const pointLightColorPicker = document.getElementById("pointLightColorPicker");
 
-        // Axes and Grid Helpers checkboxes
-        const axesHelperCheckbox = document.getElementById("axesHelperCheckbox");
-        const gridHelperCheckbox = document.getElementById("gridHelperCheckbox");
-        const riggingModeCheckbox = document.getElementById("riggingModeCheckbox");
-
-        // Outliner
-        const listaContenido = document.getElementById("listaContenido");
-        const toast = document.getElementById("toast");
-        
-        // Timeline
-        const timelinePlayhead = document.getElementById("timeline-playhead");
-
-
-        // Elementos para la sub-configuración (Transformación, Objeto, Escena, Outliner)
-        const subConfigButtons = document.querySelectorAll('.sub-config-button');
-        const subConfigSections = document.querySelectorAll('.config-sub-section');
 
         let velocidadMovimiento = parseFloat(slider.value);
         let duracionPorFrame = parseInt(animSpeedSlider.value);
@@ -1027,83 +654,36 @@
             registrarAccion({ type: 'ambientColor', oldColor: oldColor, newColor: ambientLight.color.getHex() });
         });
 
-        directionalLightIntensitySlider.addEventListener("input", () => {
-            const oldIntensity = directionalLight.intensity;
-            directionalLight.intensity = parseFloat(directionalLightIntensitySlider.value);
-            directionalLightIntensityLabel.textContent = directionalLight.intensity.toFixed(2);
-            registrarAccion({ type: 'directionalIntensity', oldIntensity: oldIntensity, newIntensity: directionalLight.intensity });
+        // NUEVO: Listeners para los controles de Luz de Punto
+        pointLightIntensitySlider.addEventListener("input", () => {
+            // Aplica el cambio a la luz de punto seleccionada si existe
+            if (objetoSeleccionado && objetoSeleccionado.userData.tipo === 'luzPunto') {
+                const oldIntensity = objetoSeleccionado.intensity;
+                objetoSeleccionado.intensity = parseFloat(pointLightIntensitySlider.value);
+                pointLightIntensityLabel.textContent = objetoSeleccionado.intensity.toFixed(1);
+                registrarAccion({ type: 'lightIntensity', objectId: objetoSeleccionado.uuid, oldIntensity: oldIntensity, newIntensity: objetoSeleccionado.intensity });
+            } else {
+                pointLightIntensityLabel.textContent = parseFloat(pointLightIntensitySlider.value).toFixed(1);
+            }
         });
 
-        directionalLightColorPicker.addEventListener("input", () => {
-            const oldColor = directionalLight.color.getHex();
-            directionalLight.color.set(directionalLightColorPicker.value);
-            registrarAccion({ type: 'directionalColor', oldColor: oldColor, newColor: directionalLight.color.getHex() });
+        pointLightDistanceSlider.addEventListener("input", () => {
+            if (objetoSeleccionado && objetoSeleccionado.userData.tipo === 'luzPunto') {
+                const oldDistance = objetoSeleccionado.distance;
+                objetoSeleccionado.distance = parseFloat(pointLightDistanceSlider.value);
+                pointLightDistanceLabel.textContent = objetoSeleccionado.distance.toFixed(1) + (objetoSeleccionado.distance === 0 ? " (infinita)" : "");
+                registrarAccion({ type: 'lightDistance', objectId: objetoSeleccionado.uuid, oldDistance: oldDistance, newDistance: objetoSeleccionado.distance });
+            } else {
+                pointLightDistanceLabel.textContent = parseFloat(pointLightDistanceSlider.value).toFixed(1) + (parseFloat(pointLightDistanceSlider.value) === 0 ? " (infinita)" : "");
+            }
         });
 
-        // Transformation input listeners
-        function setupTransformInputListeners() {
-            const inputs = [
-                { element: posXInput, prop: 'position', axis: 'x' },
-                { element: posYInput, prop: 'position', axis: 'y' },
-                { element: posZInput, prop: 'position', axis: 'z' },
-                { element: rotXInput, prop: 'rotation', axis: 'x' },
-                { element: rotYInput, prop: 'rotation', axis: 'y' },
-                { element: rotZInput, prop: 'rotation', axis: 'z' },
-                { element: scaleXInput, prop: 'scale', axis: 'x' },
-                { element: scaleYInput, prop: 'scale', axis: 'y' },
-                { element: scaleZInput, prop: 'scale', axis: 'z' }
-            ];
-
-            inputs.forEach(({ element, prop, axis }) => {
-                if (element) {
-                    element.onchange = () => {
-                        if (objetoSeleccionado && !objetoSeleccionado.userData.isLocked) {
-                            const oldValue = objetoSeleccionado[prop][axis];
-                            let newValue = parseFloat(element.value);
-                            if (prop === 'rotation') {
-                                newValue = THREE.MathUtils.degToRad(newValue); // Convert degrees to radians
-                            }
-                            if (isNaN(newValue)) {
-                                element.value = prop === 'scale' ? 1 : 0; // Reset to default if invalid
-                                newValue = prop === 'scale' ? 1 : 0;
-                            }
-                            
-                            const oldState = {
-                                position: objetoSeleccionado.position.clone(),
-                                rotation: objetoSeleccionado.rotation.clone(),
-                                scale: objetoSeleccionado.scale.clone()
-                            };
-
-                            objetoSeleccionado[prop][axis] = newValue;
-                            
-                            const newState = {
-                                position: objetoSeleccionado.position.clone(),
-                                rotation: objetoSeleccionado.rotation.clone(),
-                                scale: objetoSeleccionado.scale.clone()
-                            };
-                            registrarAccion({ type: 'transform', objectId: objetoSeleccionado.uuid, oldState: oldState, newState: newState });
-                            crearGizmos(objetoSeleccionado); // Update gizmos if transformation changes
-                        }
-                    };
-                }
-            });
-        }
-        setupTransformInputListeners();
-
-
-        // Axes and Grid Helper toggles
-        axesHelperCheckbox.addEventListener("change", (e) => {
-            const oldVisibility = axesHelper.visible;
-            axesHelper.visible = e.target.checked;
-            mostrarToast(`Ejes: ${axesHelper.visible ? 'Visible' : 'Oculto'}`);
-            registrarAccion({ type: 'axesHelper', newState: axesHelper.visible, oldState: oldVisibility });
-        });
-
-        gridHelperCheckbox.addEventListener("change", (e) => {
-            const oldVisibility = gridHelper.visible;
-            gridHelper.visible = e.target.checked;
-            mostrarToast(`Cuadrícula: ${gridHelper.visible ? 'Visible' : 'Oculto'}`);
-            registrarAccion({ type: 'gridHelper', newState: gridHelper.visible, oldState: oldVisibility });
+        pointLightColorPicker.addEventListener("input", () => {
+            if (objetoSeleccionado && objetoSeleccionado.userData.tipo === 'luzPunto') {
+                const oldColor = objetoSeleccionado.color.getHex();
+                objetoSeleccionado.color.set(pointLightColorPicker.value);
+                registrarAccion({ type: 'lightColor', objectId: objetoSeleccionado.uuid, oldColor: oldColor, newColor: objetoSeleccionado.color.getHex() });
+            }
         });
 
 
@@ -1126,269 +706,43 @@
             }, duracion);
         }
 
-        // Function to set the active tool button in the left sidebar
-        function setTool(toolId) {
-            document.querySelectorAll('#sidebar-left .boton').forEach(btn => {
-                btn.classList.remove('active');
+        function mostrarPanel(panelId) {
+            const panel = document.getElementById(panelId);
+            document.querySelectorAll('.panel').forEach(p => {
+                if (p.id !== panelId) p.style.display = 'none';
             });
-            document.getElementById(`tool-${toolId}`).classList.add('active');
-            // If the tool is a transformation tool, update the transformation mode
-            if (['move', 'rotate', 'scale'].includes(toolId)) {
-                establecerModoTransformacion(toolId === 'move' ? 'trasladar' : toolId);
-            } else {
-                // For other tools, ensure gizmos are removed if not a transformation tool
-                eliminarGizmos();
-                // We don't need to change modoTransformacion for non-transform tools
-                // but we might want to disable OrbitControls interaction if a specific tool requires it
-            }
-            mostrarToast(`Herramienta: ${toolId.charAt(0).toUpperCase() + toolId.slice(1)}`);
-        }
-
-        // Función para mostrar las sub-secciones de configuración (Transformación, Objeto, Escena, Outliner)
-        function showSubConfigSection(targetId) {
-            subConfigSections.forEach(section => {
-                if (section.id === targetId) {
-                    section.classList.add('active');
-                } else {
-                    section.classList.remove('active');
-                }
-            });
-
-            subConfigButtons.forEach(button => {
-                if (button.dataset.target === targetId) {
-                    button.classList.add('active');
-                } else {
-                    button.classList.remove('active');
-                }
-            });
-            if (targetId === 'outlinerConfig') {
+            panel.style.display = panel.style.display === "block" ? "none" : "block";
+            if (panelId === 'listaBox' && panel.style.display === 'block') {
                 actualizarLista();
             }
         }
 
-        // Añadir EventListeners a los nuevos botones de sub-configuración
-        subConfigButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const targetId = button.dataset.target;
-                showSubConfigSection(targetId);
-            });
-        });
-        // Asegurarse de que la sección General esté activa al inicio
-        showSubConfigSection('transformConfig');
-
-
-        function updateObjectPropertiesPanel(obj) {
-            objectSpecificProps.innerHTML = ''; // Clear previous content
-
-            if (!obj) {
-                objectSpecificProps.innerHTML = '<p style="text-align: center; color: #aaa; font-size: var(--font-size-sm);">Selecciona un objeto para ver sus propiedades.</p>';
-                return;
-            }
-
-            let htmlContent = '';
-
-            // Common properties (Color for meshes, Light properties for lights)
-            if (obj.isMesh && obj.material) {
-                htmlContent += `
-                    <div class="panel-section">
-                        <label>🎨 Color Objeto:</label>
-                        <input type="color" id="colorPicker" value="#${obj.material.color ? obj.material.color.getHexString() : 'ffffff'}" />
-                    </div>
-                    <div class="panel-section">
-                        <label>✨ Rugosidad (Roughness):</label>
-                        <input type="range" id="roughnessSlider" min="0" max="1" step="0.01" value="${obj.material.roughness !== undefined ? obj.material.roughness : 0.5}">
-                        <span id="roughnessLabel" class="slider-value-label">${(obj.material.roughness !== undefined ? obj.material.roughness : 0.5).toFixed(2)}</span>
-                    </div>
-                    <div class="panel-section">
-                        <label>✨ Metalicidad (Metalness):</label>
-                        <input type="range" id="metalnessSlider" min="0" max="1" step="0.01" value="${obj.material.metalness !== undefined ? obj.material.metalness : 0.0}">
-                        <span id="metalnessLabel" class="slider-value-label">${(obj.material.metalness !== undefined ? obj.material.metalness : 0.0).toFixed(2)}</span>
-                    </div>
-                    <div class="panel-section">
-                        <label>✨ Opacidad (Opacity):</label>
-                        <input type="range" id="opacitySlider" min="0" max="1" step="0.01" value="${obj.material.opacity !== undefined ? obj.material.opacity : 1.0}">
-                        <span id="opacityLabel" class="slider-value-label">${(obj.material.opacity !== undefined ? obj.material.opacity : 1.0).toFixed(2)}</span>
-                        <div class="checkbox-container">
-                            <label for="transparentCheckbox">👻 Transparente:</label>
-                            <input type="checkbox" id="transparentCheckbox" ${obj.material.transparent ? 'checked' : ''}>
-                        </div>
-                    </div>
-                `;
-            } else if (obj.userData.tipo === 'luzPunto') {
-                htmlContent += `
-                    <div class="panel-section">
-                        <label>💡 Luz de Punto (Intensidad):</label>
-                        <input type="range" id="pointLightIntensitySlider" min="0" max="5" step="0.1" value="${obj.intensity}">
-                        <span id="pointLightIntensityLabel" class="slider-value-label">${obj.intensity.toFixed(1)}</span>
-                    </div>
-                    <div class="panel-section">
-                        <label>💡 Luz de Punto (Distancia):</label>
-                        <input type="range" id="pointLightDistanceSlider" min="0" max="20" step="0.5" value="${obj.distance}">
-                        <span id="pointLightDistanceLabel" class="slider-value-label">${obj.distance.toFixed(1)} ${obj.distance === 0 ? " (infinita)" : ""}</span>
-                    </div>
-                    <div class="panel-section">
-                        <label>💡 Luz de Punto (Color):</label>
-                        <input type="color" id="pointLightColorPicker" value="#${obj.color.getHexString()}">
-                    </div>
-                `;
-            } else if (obj.userData.tipo === 'grupo') {
-                htmlContent += `
-                    <p style="text-align: center; color: #aaa; font-size: var(--font-size-sm);">Este es un grupo. Sus propiedades se controlan a través de los objetos individuales.</p>
-                `;
-            } else if (obj.userData.tipo === 'modelo') {
-                htmlContent += `
-                    <div class="panel-section">
-                        <label>🎨 Color Objeto:</label>
-                        <input type="color" id="colorPicker" value="#${obj.userData.lastColor ? new THREE.Color(obj.userData.lastColor).getHexString() : 'ffffff'}" />
-                    </div>
-                    <div class="panel-section">
-                        <p style="font-size: var(--font-size-sm); color: #aaa;">Las propiedades de material avanzadas pueden no ser aplicables a todos los modelos importados.</p>
-                    </div>
-                `;
-            }
-
-            objectSpecificProps.innerHTML = htmlContent;
-            setupDynamicObjectPropListeners(obj);
-        }
-
-        function setupDynamicObjectPropListeners(obj) {
-            // Color Picker
-            const colorPicker = document.getElementById("colorPicker");
-            if (colorPicker) {
+        function mostrarColorPicker(obj) {
+            if (obj && obj.material && obj.material.color) {
+                colorPicker.value = "#" + obj.material.color.getHexString();
+                colorBox.style.display = "block";
                 colorPicker.oninput = () => {
-                    if (obj.isMesh && obj.material) {
-                        const oldColor = obj.material.color.getHex();
-                        obj.material.color.set(colorPicker.value);
-                        const newColor = obj.material.color.getHex();
-                        if (oldColor !== newColor) {
-                            registrarAccion({ type: 'color', objectId: obj.uuid, oldColor: oldColor, newColor: newColor });
-                        }
-                    } else if (obj.userData.tipo === 'modelo') {
-                        const oldColor = obj.userData.lastColor;
-                        const newColor = new THREE.Color(colorPicker.value).getHex();
-                        obj.traverse((child) => {
-                            if (child.isMesh && child.material) {
-                                child.material.color.set(colorPicker.value);
-                            }
-                        });
-                        obj.userData.lastColor = newColor;
+                    const oldColor = obj.material.color.getHex();
+                    obj.material.color.set(colorPicker.value);
+                    const newColor = obj.material.color.getHex();
+                    if (oldColor !== newColor) {
                         registrarAccion({ type: 'color', objectId: obj.uuid, oldColor: oldColor, newColor: newColor });
                     }
                 };
-            }
-
-            // Material properties listeners (Roughness, Metalness, Opacity, Transparent)
-            const roughnessSlider = document.getElementById("roughnessSlider");
-            const roughnessLabel = document.getElementById("roughnessLabel");
-            const metalnessSlider = document.getElementById("metalnessSlider");
-            const metalnessLabel = document.getElementById("metalnessLabel");
-            const opacitySlider = document.getElementById("opacitySlider");
-            const opacityLabel = document.getElementById("opacityLabel");
-            const transparentCheckbox = document.getElementById("transparentCheckbox");
-
-            if (roughnessSlider) {
-                roughnessSlider.addEventListener("input", () => {
-                    if (obj.isMesh && obj.material instanceof THREE.MeshStandardMaterial) {
-                        const oldRoughness = obj.material.roughness;
-                        obj.material.roughness = parseFloat(roughnessSlider.value);
-                        roughnessLabel.textContent = obj.material.roughness.toFixed(2);
-                        registrarAccion({ type: 'materialProp', objectId: obj.uuid, prop: 'roughness', oldValue: oldRoughness, newValue: obj.material.roughness });
-                    }
-                });
-            }
-            if (metalnessSlider) {
-                metalnessSlider.addEventListener("input", () => {
-                    if (obj.isMesh && obj.material instanceof THREE.MeshStandardMaterial) {
-                        const oldMetalness = obj.material.metalness;
-                        obj.material.metalness = parseFloat(metalnessSlider.value);
-                        metalnessLabel.textContent = obj.material.metalness.toFixed(2);
-                        registrarAccion({ type: 'materialProp', objectId: obj.uuid, prop: 'metalness', oldValue: oldMetalness, newValue: obj.material.metalness });
-                    }
-                });
-            }
-            if (opacitySlider) {
-                opacitySlider.addEventListener("input", () => {
-                    if (obj.isMesh && obj.material) {
-                        const oldOpacity = obj.material.opacity;
-                        obj.material.opacity = parseFloat(opacitySlider.value);
-                        opacityLabel.textContent = obj.material.opacity.toFixed(2);
-                        if (obj.material.opacity < 1 && !obj.material.transparent) {
-                            obj.material.transparent = true;
-                            if (transparentCheckbox) transparentCheckbox.checked = true;
-                        } else if (obj.material.opacity === 1 && obj.material.transparent && transparentCheckbox && !transparentCheckbox.checked) {
-                            obj.material.transparent = false;
-                        }
-                        obj.material.needsUpdate = true;
-                        registrarAccion({ type: 'materialProp', objectId: obj.uuid, prop: 'opacity', oldValue: oldOpacity, newValue: obj.material.opacity });
-                    }
-                });
-            }
-            if (transparentCheckbox) {
-                transparentCheckbox.addEventListener("change", (e) => {
-                    if (obj.isMesh && obj.material) {
-                        const oldTransparent = obj.material.transparent;
-                        obj.material.transparent = e.target.checked;
-                        if (e.target.checked && obj.material.opacity === 1) {
-                            mostrarToast("Ajusta la opacidad para ver la transparencia.");
-                        } else if (!e.target.checked && obj.material.opacity < 1) {
-                            obj.material.opacity = 1;
-                            if (opacitySlider) opacitySlider.value = 1;
-                            if (opacityLabel) opacityLabel.textContent = "1.00";
-                        }
-                        obj.material.needsUpdate = true;
-                        registrarAccion({ type: 'materialProp', objectId: obj.uuid, prop: 'transparent', oldValue: oldTransparent, newValue: obj.material.transparent });
-                    }
-                });
-            }
-
-            // Point Light properties listeners
-            const pointLightIntensitySlider = document.getElementById("pointLightIntensitySlider");
-            const pointLightIntensityLabel = document.getElementById("pointLightIntensityLabel");
-            const pointLightDistanceSlider = document.getElementById("pointLightDistanceSlider");
-            const pointLightDistanceLabel = document.getElementById("pointLightDistanceLabel");
-            const pointLightColorPicker = document.getElementById("pointLightColorPicker");
-
-            if (pointLightIntensitySlider) {
-                pointLightIntensitySlider.addEventListener("input", () => {
-                    if (obj.userData.tipo === 'luzPunto') {
-                        const oldIntensity = obj.intensity;
-                        obj.intensity = parseFloat(pointLightIntensitySlider.value);
-                        pointLightIntensityLabel.textContent = obj.intensity.toFixed(1);
-                        registrarAccion({ type: 'lightIntensity', objectId: obj.uuid, oldIntensity: oldIntensity, newIntensity: obj.intensity });
-                    }
-                });
-            }
-            if (pointLightDistanceSlider) {
-                pointLightDistanceSlider.addEventListener("input", () => {
-                    if (obj.userData.tipo === 'luzPunto') {
-                        const oldDistance = obj.distance;
-                        obj.distance = parseFloat(pointLightDistanceSlider.value);
-                        pointLightDistanceLabel.textContent = obj.distance.toFixed(1) + (obj.distance === 0 ? " (infinita)" : "");
-                        registrarAccion({ type: 'lightDistance', objectId: obj.uuid, oldDistance: oldDistance, newDistance: obj.distance });
-                    }
-                });
-            }
-            if (pointLightColorPicker) {
-                pointLightColorPicker.addEventListener("input", () => {
-                    if (obj.userData.tipo === 'luzPunto') {
-                        const oldColor = obj.color.getHex();
-                        obj.color.set(pointLightColorPicker.value);
-                        const helper = obj.children.find(c => c.name.startsWith(`Helper `));
-                        if (helper && helper.material) {
-                            helper.material.color.set(obj.color);
-                        }
-                        registrarAccion({ type: 'lightColor', objectId: obj.uuid, oldColor: oldColor, newColor: obj.color.getHex() });
-                    }
-                });
+            } else {
+                ocultarColorPicker();
             }
         }
 
+        function ocultarColorPicker() {
+            colorBox.style.display = "none";
+        }
 
         function actualizarBotonesTransformacion() {
             document.querySelectorAll('.modo-transformacion button').forEach(btn => {
-                btn.classList.remove('active');
+                btn.classList.remove('activo');
             });
-            document.getElementById(`btnModo${modoTransformacion.charAt(0).toUpperCase() + modoTransformacion.slice(1)}`).classList.add('active');
+            document.getElementById(`btnModo${modoTransformacion.charAt(0).toUpperCase() + modoTransformacion.slice(1)}`).classList.add('activo');
         }
 
         function establecerModoTransformacion(modo) {
@@ -1397,25 +751,18 @@
             if (objetoSeleccionado) {
                 crearGizmos(objetoSeleccionado);
             }
-            // Also update the left sidebar tool active state
-            document.querySelectorAll('#sidebar-left .boton').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            if (modo === 'trasladar') document.getElementById('tool-move').classList.add('active');
-            else if (modo === 'rotar') document.getElementById('tool-rotate').classList.add('active');
-            else if (modo === 'escalar') document.getElementById('tool-scale').classList.add('active');
-            
             mostrarToast(`Modo: ${modo.charAt(0).toUpperCase() + modo.slice(1)}`);
         }
-        establecerModoTransformacion('trasladar'); // Default to move mode on startup
+        establecerModoTransformacion('trasladar');
 
+        // NUEVO: Funciones para modos de visualización
         function actualizarBotonesVisualizacion() {
             document.querySelectorAll('.modo-visualizacion button').forEach(btn => {
-                btn.classList.remove('active');
+                btn.classList.remove('activo');
             });
             const btnId = `btnModo${modoVisualizacion.charAt(0).toUpperCase() + modoVisualizacion.slice(1)}`;
             const btn = document.getElementById(btnId);
-            if (btn) btn.classList.add('active');
+            if (btn) btn.classList.add('activo');
         }
 
         function establecerModoVisualizacion(modo) {
@@ -1428,18 +775,15 @@
 
         function aplicarModoVisualizacionAObjetos() {
             objetos.forEach(obj => {
+                // Solo aplica a objetos con geometría y material
                 if (obj.isMesh && obj.material) {
+                    // Guarda el material original si no se ha guardado ya
                     if (!obj.userData.originalMaterial) {
-                        obj.userData.originalMaterial = obj.material.clone(); // Clone to preserve properties
+                        obj.userData.originalMaterial = obj.material;
                         obj.userData.originalMaterialColor = obj.material.color ? obj.material.color.getHex() : 0xffffff;
-                        obj.userData.originalRoughness = obj.material.roughness;
-                        obj.userData.originalMetalness = obj.material.metalness;
-                        obj.userData.originalOpacity = obj.material.opacity;
-                        obj.userData.originalTransparent = obj.material.transparent;
                     }
 
-                    if (obj.userData.tipo === 'luzPunto') {
-                        // Light helpers should always be visible and not change material
+                    if (obj.userData.tipo === 'luzPunto') { // Las luces no cambian de visualización
                         obj.material = obj.userData.originalMaterial;
                         return;
                     }
@@ -1447,13 +791,7 @@
                     switch (modoVisualizacion) {
                         case 'normal':
                             obj.material = obj.userData.originalMaterial;
-                            // Restore original material properties
-                            if (obj.material.color) obj.material.color.set(obj.userData.originalMaterialColor);
-                            if (obj.material.roughness !== undefined) obj.material.roughness = obj.userData.originalRoughness !== undefined ? obj.userData.originalRoughness : 0.5;
-                            if (obj.material.metalness !== undefined) obj.material.metalness = obj.userData.originalMetalness !== undefined ? obj.userData.originalMetalness : 0;
-                            if (obj.material.opacity !== undefined) obj.material.opacity = obj.userData.originalOpacity !== undefined ? obj.userData.originalOpacity : 1;
-                            if (obj.material.transparent !== undefined) obj.material.transparent = obj.userData.originalTransparent !== undefined ? obj.userData.originalTransparent : false;
-
+                            if (obj.material.color) obj.material.color.set(obj.userData.originalMaterialColor); // Restaura el color original
                             obj.material.wireframe = false;
                             if (obj.userData.bboxHelper) {
                                 escena.remove(obj.userData.bboxHelper);
@@ -1462,9 +800,10 @@
                             }
                             break;
                         case 'wireframe':
+                            // Si el material original ya es wireframe, úsalo. Si no, crea uno nuevo.
                             if (!obj.userData.wireframeMaterial) {
                                 obj.userData.wireframeMaterial = new THREE.MeshBasicMaterial({
-                                    color: obj.userData.originalMaterialColor || 0x00ff00,
+                                    color: obj.userData.originalMaterialColor || 0x00ff00, // Usa el color original o verde
                                     wireframe: true
                                 });
                             }
@@ -1476,10 +815,10 @@
                             }
                             break;
                         case 'bbox':
-                            obj.material = obj.userData.originalMaterial;
+                            obj.material = obj.userData.originalMaterial; // Vuelve al material normal
                             obj.material.wireframe = false;
                             if (!obj.userData.bboxHelper) {
-                                obj.userData.bboxHelper = new THREE.BoxHelper(obj, 0xffff00);
+                                obj.userData.bboxHelper = new THREE.BoxHelper(obj, 0xffff00); // Color amarillo
                                 escena.add(obj.userData.bboxHelper);
                             }
                             break;
@@ -1487,6 +826,7 @@
                     obj.material.needsUpdate = true;
                 }
             });
+            // Asegúrate de que los helpers de Bounding Box se actualicen
             if (modoVisualizacion === 'bbox') {
                 objetos.forEach(obj => {
                     if (obj.userData.bboxHelper) {
@@ -1529,55 +869,29 @@
             }
         }
 
-        function toggleAxesHelper(checked) {
-            axesHelper.visible = checked;
-            mostrarToast(`Ejes: ${checked ? 'Visible' : 'Oculto'}`);
-            registrarAccion({ type: 'axesHelper', newState: checked, oldState: !checked });
-        }
-
-        function toggleGridHelper(checked) {
-            gridHelper.visible = checked;
-            mostrarToast(`Cuadrícula: ${checked ? 'Visible' : 'Oculto'}`);
-            registrarAccion({ type: 'gridHelper', newState: checked, oldState: !checked });
-        }
-
 
         // --- Funciones de Gestión de Escena y Objetos ---
 
         function agregarFigura(tipo) {
             let geo;
             let initialScale = new THREE.Vector3(1, 1, 1);
-            let initialY = 0.6; // Default for most objects
             switch (tipo) {
                 case 'cubo': geo = new THREE.BoxGeometry(1, 1, 1); break;
                 case 'esfera': geo = new THREE.SphereGeometry(0.6, 32, 16); break;
                 case 'cono': geo = new THREE.ConeGeometry(0.5, 1.2, 32); break;
                 case 'cilindro': geo = new THREE.CylinderGeometry(0.5, 0.5, 1.2, 32); break;
-                case 'toroide': geo = new THREE.TorusGeometry(0.5, 0.2, 16, 100); break;
-                case 'plano': geo = new THREE.PlaneGeometry(5, 5); initialY = 0; break;
-                case 'capsula': geo = new THREE.CapsuleGeometry(0.4, 1, 8, 16); break;
                 default: return;
             }
             const mat = new THREE.MeshStandardMaterial({ color: Math.random() * 0xffffff });
             const figura = new THREE.Mesh(geo, mat);
-            figura.position.set(Math.random() * 3 - 1.5, initialY, Math.random() * 3 - 1.5);
-            
+            figura.position.set(Math.random() * 3 - 1.5, 0.6, Math.random() * 3 - 1.5);
             contador[tipo]++;
             figura.name = tipo.charAt(0).toUpperCase() + tipo.slice(1) + " " + contador[tipo];
             figura.userData.tipo = tipo;
             figura.userData.initialPosition = figura.position.clone();
             figura.userData.initialRotation = figura.rotation.clone();
             figura.userData.initialScale = initialScale.clone();
-            figura.userData.isLocked = false;
-
-            // Store initial material properties for normal mode and undo/redo
-            figura.userData.originalMaterial = figura.material.clone();
-            figura.userData.originalMaterialColor = figura.material.color.getHex();
-            figura.userData.originalRoughness = figura.material.roughness;
-            figura.userData.originalMetalness = figura.material.metalness;
-            figura.userData.originalOpacity = figura.material.opacity;
-            figura.userData.originalTransparent = figura.material.transparent;
-
+            figura.userData.isLocked = false; // NUEVO: Propiedad para bloquear
             escena.add(figura);
             objetos.push(figura);
             actualizarLista();
@@ -1586,25 +900,27 @@
             registrarAccion({ type: 'add', objectId: figura.uuid, objectData: serializarObjeto(figura) });
         }
 
+        // NUEVO: Función para agregar Luz de Punto
         function agregarLuzPunto() {
-            const pointLight = new THREE.PointLight(0xffffff, 1, 0);
+            const pointLight = new THREE.PointLight(0xffffff, 1, 0); // Color, intensidad, distancia (0 = infinita)
             pointLight.position.set(Math.random() * 3 - 1.5, 2, Math.random() * 3 - 1.5);
             
+            // Añadir un helper visual para la luz
             const sphereSize = 0.2;
             const pointLightHelper = new THREE.Mesh(
                 new THREE.SphereGeometry(sphereSize, 16, 16),
                 new THREE.MeshBasicMaterial({ color: pointLight.color, transparent: true, opacity: 0.5 })
             );
             pointLightHelper.name = "Helper " + (contador.luzPunto + 1);
-            pointLight.add(pointLightHelper);
+            pointLight.add(pointLightHelper); // El helper se mueve con la luz
 
             contador.luzPunto++;
             pointLight.name = "Luz de Punto " + contador.luzPunto;
             pointLight.userData.tipo = 'luzPunto';
             pointLight.userData.initialPosition = pointLight.position.clone();
-            pointLight.userData.initialRotation = pointLight.rotation.clone();
-            pointLight.userData.initialScale = new THREE.Vector3(1,1,1);
-            pointLight.userData.isLocked = false;
+            pointLight.userData.initialRotation = pointLight.rotation.clone(); // Las luces de punto no rotan visualmente, pero se guarda
+            pointLight.userData.initialScale = new THREE.Vector3(1,1,1); // Las luces no escalan
+            pointLight.userData.isLocked = false; // Propiedad para bloquear
 
             escena.add(pointLight);
             objetos.push(pointLight);
@@ -1639,7 +955,7 @@
             contador[tipo]++;
             nuevoObjeto.name = tipo.charAt(0).toUpperCase() + tipo.slice(1) + " " + contador[tipo];
             nuevoObjeto.uuid = THREE.MathUtils.generateUUID();
-            nuevoObjeto.userData.isLocked = false;
+            nuevoObjeto.userData.isLocked = false; // El duplicado no debe estar bloqueado por defecto
 
             escena.add(nuevoObjeto);
             objetos.push(nuevoObjeto);
@@ -1649,6 +965,7 @@
             registrarAccion({ type: 'add', objectId: nuevoObjeto.uuid, objectData: serializarObjeto(nuevoObjeto) });
         }
 
+        // NUEVO: Agrupar objetos
         function agruparObjetos() {
             if (objetosSeleccionadosMultiples.length < 2) {
                 mostrarToast("☝️ Selecciona al menos dos objetos para agrupar (Ctrl/Cmd + clic).");
@@ -1661,6 +978,7 @@
             grupo.userData.tipo = 'grupo';
             grupo.userData.isLocked = false;
 
+            // Calcular el centro del grupo para posicionarlo correctamente
             const bbox = new THREE.Box3();
             objetosSeleccionadosMultiples.forEach(obj => {
                 bbox.expandByObject(obj);
@@ -1669,12 +987,15 @@
             bbox.getCenter(centro);
             grupo.position.copy(centro);
 
+            // Mueve los objetos al grupo y ajusta sus posiciones relativas
             objetosSeleccionadosMultiples.forEach(obj => {
+                // Asegúrate de que el objeto no esté bloqueado
                 if (obj.userData.isLocked) {
                     mostrarToast(`🔒 No se puede agrupar el objeto bloqueado: ${obj.name}.`);
-                    return;
+                    return; // Salta este objeto si está bloqueado
                 }
-                grupo.attach(obj);
+                grupo.attach(obj); // Mueve el objeto al grupo, manteniendo su posición global
+                // Eliminar del array de objetos principales
                 const index = objetos.indexOf(obj);
                 if (index > -1) {
                     objetos.splice(index, 1);
@@ -1686,8 +1007,9 @@
             grupo.userData.initialScale = grupo.scale.clone();
 
             escena.add(grupo);
-            objetos.push(grupo);
+            objetos.push(grupo); // Añade el grupo a la lista principal de objetos
             
+            // Limpiar selección múltiple y seleccionar el grupo
             objetosSeleccionadosMultiples.length = 0;
             seleccionarFigura(grupo);
             actualizarLista();
@@ -1695,6 +1017,7 @@
             registrarAccion({ type: 'group', groupId: grupo.uuid, groupData: serializarObjeto(grupo), childUuids: grupo.children.map(c => c.uuid) });
         }
 
+        // NUEVO: Desagrupar objetos
         function desagruparObjetos() {
             if (!objetoSeleccionado || objetoSeleccionado.userData.tipo !== 'grupo') {
                 mostrarToast("☝️ Selecciona un grupo para desagrupar.");
@@ -1706,29 +1029,32 @@
             }
 
             const grupo = objetoSeleccionado;
-            const childUuids = grupo.children.map(c => c.uuid);
-            const oldGroupData = serializarObjeto(grupo);
+            const childUuids = grupo.children.map(c => c.uuid); // Guardar UUIDs para deshacer/rehacer
+            const oldGroupData = serializarObjeto(grupo); // Guardar estado del grupo
 
+            // Mueve los hijos del grupo de vuelta a la escena principal
+            // Es importante iterar de atrás hacia adelante al eliminar elementos de una colección
             for (let i = grupo.children.length - 1; i >= 0; i--) {
                 const child = grupo.children[i];
-                escena.attach(child);
-                objetos.push(child);
+                escena.attach(child); // Mueve el hijo a la escena, manteniendo su posición global
+                objetos.push(child); // Añade el hijo de nuevo a la lista principal de objetos
             }
 
-            escena.remove(grupo);
+            escena.remove(grupo); // Elimina el grupo vacío de la escena
             const index = objetos.indexOf(grupo);
             if (index > -1) {
-                objetos.splice(index, 1);
+                objetos.splice(index, 1); // Elimina el grupo de la lista principal de objetos
             }
 
-            objetoSeleccionado = null;
+            objetoSeleccionado = null; // Deselecciona el grupo
             eliminarGizmos();
-            updateObjectPropertiesPanel(null); // Clear object properties
+            ocultarColorPicker();
             actualizarLista();
             mostrarToast(`✔️ Grupo '${grupo.name}' desagrupado.`);
             registrarAccion({ type: 'ungroup', oldGroupData: oldGroupData, childUuids: childUuids });
         }
 
+        // NUEVO: Resetear Transformación
         function resetearTransformacion() {
             if (!objetoSeleccionado) {
                 mostrarToast("☝️ Selecciona una figura para resetear su transformación.");
@@ -1749,12 +1075,10 @@
             objetoSeleccionado.rotation.set(0, 0, 0);
             objetoSeleccionado.scale.set(1, 1, 1);
 
+            // Para luces de punto, la posición inicial puede ser diferente de (0,0,0)
             if (objetoSeleccionado.userData.tipo === 'luzPunto') {
                 objetoSeleccionado.position.copy(objetoSeleccionado.userData.initialPosition || new THREE.Vector3(0,2,0));
-            } else if (objetoSeleccionado.userData.tipo === 'plano') {
-                 objetoSeleccionado.position.copy(objetoSeleccionado.userData.initialPosition || new THREE.Vector3(0,0,0));
-            }
-            else {
+            } else {
                 objetoSeleccionado.position.copy(objetoSeleccionado.userData.initialPosition || new THREE.Vector3(0,0.6,0));
             }
             objetoSeleccionado.rotation.copy(objetoSeleccionado.userData.initialRotation || new THREE.Euler(0,0,0));
@@ -1762,7 +1086,6 @@
 
 
             crearGizmos(objetoSeleccionado);
-            updateTransformInputs(objetoSeleccionado); // Update UI inputs
             mostrarToast(`♻️ Transformación de ${objetoSeleccionado.name} reseteada.`);
             const newState = {
                 position: objetoSeleccionado.position.clone(),
@@ -1801,7 +1124,7 @@
                     model.userData.initialRotation = model.rotation.clone();
                     model.userData.initialScale = model.scale.clone();
                     model.userData.gltfAnimations = gltf.animations;
-                    model.userData.isLocked = false;
+                    model.userData.isLocked = false; // Propiedad para bloquear
 
                     model.traverse((child) => {
                         if (child.isMesh && child.material) {
@@ -1888,11 +1211,7 @@
             const data = {
                 type: material.type,
                 color: material.color ? material.color.getHex() : undefined,
-                map: material.map ? material.map.image.src : undefined,
-                roughness: material.roughness !== undefined ? material.roughness : undefined,
-                metalness: material.metalness !== undefined ? material.metalness : undefined,
-                opacity: material.opacity !== undefined ? material.opacity : undefined,
-                transparent: material.transparent !== undefined ? material.transparent : undefined
+                map: material.map ? material.map.image.src : undefined
             };
             return data;
         }
@@ -1902,7 +1221,7 @@
             if (materialData.type === 'MeshStandardMaterial') {
                 material = new THREE.MeshStandardMaterial();
             } else if (materialData.type === 'MeshBasicMaterial') {
-                material = new THREE.MeshBasicMaterial();
+                material = new THREE.MeshBasicMaterial(); // Para los helpers de luz
             } else {
                 material = new THREE.MeshStandardMaterial();
             }
@@ -1913,18 +1232,6 @@
             if (materialData.map) {
                 const textureLoader = new THREE.TextureLoader();
                 material.map = textureLoader.load(materialData.map);
-            }
-            if (materialData.roughness !== undefined) {
-                material.roughness = materialData.roughness;
-            }
-            if (materialData.metalness !== undefined) {
-                material.metalness = materialData.metalness;
-            }
-            if (materialData.opacity !== undefined) {
-                material.opacity = materialData.opacity;
-            }
-            if (materialData.transparent !== undefined) {
-                material.transparent = materialData.transparent;
             }
             return material;
         }
@@ -1946,8 +1253,9 @@
                 if (objetoSeleccionado && objetoSeleccionado.uuid === obj.uuid) {
                     objetoSeleccionado = null;
                     eliminarGizmos();
-                    updateObjectPropertiesPanel(null); // Clear object properties
+                    ocultarColorPicker();
                 }
+                // Limpiar bboxHelper si existe
                 if (obj.userData.bboxHelper) {
                     escena.remove(obj.userData.bboxHelper);
                     obj.userData.bboxHelper.dispose();
@@ -1959,10 +1267,11 @@
             }
         }
 
+        // NUEVO: Función para bloquear/desbloquear objeto
         function toggleBloquearObjeto(obj) {
             obj.userData.isLocked = !obj.userData.isLocked;
-            actualizarLista();
-            seleccionarFigura(obj); // Re-select to update UI state
+            actualizarLista(); // Para que el icono y la clase se actualicen
+            seleccionarFigura(obj); // Para actualizar el estado de los gizmos
             mostrarToast(`${obj.name} ${obj.userData.isLocked ? 'bloqueado 🔒' : 'desbloqueado 🔓'}.`);
             registrarAccion({ type: 'lock', objectId: obj.uuid, newState: obj.userData.isLocked });
         }
@@ -1971,21 +1280,22 @@
         function actualizarLista() {
             listaContenido.innerHTML = "";
             if (objetos.length === 0) {
-                listaContenido.innerHTML = "<p style='padding: 10px; text-align: center; color: #aaa; font-size:var(--font-size-sm);'>No hay figuras en la escena.</p>";
+                listaContenido.innerHTML = "<p style='padding: 10px; text-align: center; color: #aaa; font-size:12px;'>No hay figuras en la escena.</p>";
                 return;
             }
             objetos.forEach(obj => {
                 const item = document.createElement("div");
                 item.className = `itemLista ${objetoSeleccionado && objetoSeleccionado.uuid === obj.uuid ? 'seleccionado' : ''} ${obj.userData.isLocked ? 'bloqueado' : ''}`;
+                // Guardar el elemento HTML en userData para selección múltiple
                 obj.element = item;
-                item.setAttribute('data-uuid', obj.uuid);
+                item.setAttribute('data-uuid', obj.uuid); // Añadir data-uuid para fácil selección
 
                 const nameSpan = document.createElement("span");
                 nameSpan.className = "nombre-item";
                 nameSpan.textContent = obj.name;
                 nameSpan.onclick = (e) => {
                     e.stopPropagation();
-                    seleccionarFiguraDesdeLista(obj, e.ctrlKey || e.metaKey);
+                    seleccionarFiguraDesdeLista(obj, e.ctrlKey || e.metaKey); // Añadir soporte para Ctrl/Cmd
                 };
 
                 const renameInput = document.createElement("input");
@@ -2029,8 +1339,9 @@
                 const buttonsDiv = document.createElement("div");
                 buttonsDiv.className = "botones-item";
 
+                // NUEVO: Botón de Bloquear/Desbloquear
                 const lockButton = document.createElement("button");
-                lockButton.className = `boton-bloquear-item ${obj.userData.isLocked ? 'active' : ''}`;
+                lockButton.className = `boton-bloquear-item ${obj.userData.isLocked ? 'activo' : ''}`;
                 lockButton.textContent = obj.userData.isLocked ? '🔓' : '🔒';
                 lockButton.title = obj.userData.isLocked ? 'Desbloquear' : 'Bloquear';
                 lockButton.onclick = (e) => {
@@ -2063,7 +1374,7 @@
                     eliminarFigura(obj);
                 };
                 
-                buttonsDiv.appendChild(lockButton);
+                buttonsDiv.appendChild(lockButton); // Añadir botón de bloqueo
                 buttonsDiv.appendChild(renameButton);
                 buttonsDiv.appendChild(deleteButton);
                 
@@ -2074,8 +1385,9 @@
             });
         }
 
+        // Modificado: seleccionarFiguraDesdeLista para selección múltiple
         function seleccionarFiguraDesdeLista(obj, esMultiple = false) {
-            if (obj.userData.isLocked && !esMultiple) {
+            if (obj.userData.isLocked && !esMultiple) { // Si está bloqueado y no es selección múltiple, no lo selecciones
                 mostrarToast(`🔒 ${obj.name} está bloqueado.`);
                 return;
             }
@@ -2083,24 +1395,26 @@
             if (esMultiple) {
                 const index = objetosSeleccionadosMultiples.indexOf(obj);
                 if (index > -1) {
-                    objetosSeleccionadosMultiples.splice(index, 1);
-                    obj.element.classList.remove('seleccionado');
+                    objetosSeleccionadosMultiples.splice(index, 1); // Deseleccionar
+                    obj.element.classList.remove('seleccionado'); // Eliminar clase visual
                 } else {
-                    if (obj.userData.isLocked) {
+                    if (obj.userData.isLocked) { // No permitir seleccionar objetos bloqueados en selección múltiple
                         mostrarToast(`🔒 ${obj.name} está bloqueado y no se puede seleccionar para agrupar.`);
                         return;
                     }
-                    objetosSeleccionadosMultiples.push(obj);
-                    obj.element.classList.add('seleccionado');
+                    objetosSeleccionadosMultiples.push(obj); // Seleccionar
+                    obj.element.classList.add('seleccionado'); // Añadir clase visual
                 }
+                // Deseleccionar el objeto único si hay selección múltiple activa
                 if (objetoSeleccionado && !objetosSeleccionadosMultiples.includes(objetoSeleccionado)) {
                     objetoSeleccionado = null;
                     eliminarGizmos();
-                    updateObjectPropertiesPanel(null); // Clear object properties
+                    ocultarColorPicker();
                 }
                 mostrarToast(`Seleccionados: ${objetosSeleccionadosMultiples.length} objetos.`);
-                actualizarLista();
+                actualizarLista(); // Para refrescar los estilos
             } else {
+                // Limpiar selección múltiple si se selecciona un solo objeto sin Ctrl/Cmd
                 objetosSeleccionadosMultiples.forEach(o => {
                     const listItem = document.querySelector(`.itemLista.seleccionado[data-uuid="${o.uuid}"]`);
                     if (listItem) listItem.classList.remove('seleccionado');
@@ -2146,31 +1460,21 @@
                     });
                 }
             }
-            updateTransformInputs(objetoSeleccionado);
-            updateObjectPropertiesPanel(objetoSeleccionado);
+            // Actualizar panel de color y luz de punto
+            if (objetoSeleccionado && objetoSeleccionado.userData.tipo === 'luzPunto') {
+                ocultarColorPicker(); // Ocultar el color picker de material
+                pointLightIntensitySlider.value = objetoSeleccionado.intensity;
+                pointLightIntensityLabel.textContent = objetoSeleccionado.intensity.toFixed(1);
+                pointLightDistanceSlider.value = objetoSeleccionado.distance;
+                pointLightDistanceLabel.textContent = objetoSeleccionado.distance.toFixed(1) + (objetoSeleccionado.distance === 0 ? " (infinita)" : "");
+                pointLightColorPicker.value = "#" + objetoSeleccionado.color.getHexString();
+            } else {
+                mostrarColorPicker(objetoSeleccionado); // Mostrar color picker de material
+            }
             
             mostrarToast(`✨ ${obj.name} seleccionado.`);
             actualizarLista();
         }
-
-        function updateTransformInputs(obj) {
-            if (obj) {
-                posXInput.value = obj.position.x.toFixed(2);
-                posYInput.value = obj.position.y.toFixed(2);
-                posZInput.value = obj.position.z.toFixed(2);
-                rotXInput.value = THREE.MathUtils.radToDeg(obj.rotation.x).toFixed(2);
-                rotYInput.value = THREE.MathUtils.radToDeg(obj.rotation.y).toFixed(2);
-                rotZInput.value = THREE.MathUtils.radToDeg(obj.rotation.z).toFixed(2);
-                scaleXInput.value = obj.scale.x.toFixed(2);
-                scaleYInput.value = obj.scale.y.toFixed(2);
-                scaleZInput.value = obj.scale.z.toFixed(2);
-            } else {
-                posXInput.value = ''; posYInput.value = ''; posZInput.value = '';
-                rotXInput.value = ''; rotYInput.value = ''; rotZInput.value = '';
-                scaleXInput.value = ''; scaleYInput.value = ''; scaleZInput.value = '';
-            }
-        }
-
 
         function centrarFigura() {
             if (objetoSeleccionado) {
@@ -2180,7 +1484,6 @@
                 }
                 const oldPos = objetoSeleccionado.position.clone();
                 objetoSeleccionado.position.set(0, objetoSeleccionado.position.y, 0);
-                updateTransformInputs(objetoSeleccionado); // Update UI inputs
                 mostrarToast(`🎯 ${objetoSeleccionado.name} centrado.`);
                 registrarAccion({ type: 'transform', objectId: objetoSeleccionado.uuid, oldState: { position: oldPos.clone(), rotation: objetoSeleccionado.rotation.clone(), scale: objetoSeleccionado.scale.clone() }, newState: { position: objetoSeleccionado.position.clone(), rotation: objetoSeleccionado.rotation.clone(), scale: objetoSeleccionado.scale.clone() } });
             } else {
@@ -2189,7 +1492,8 @@
         }
 
         // --- Gizmos de Transformación ---
-        const ESCALA_GIZMO = 0.5; /* Even more reduced gizmo scale */
+        // REDUCIDO EL TAMAÑO DE LOS GIZMOS AQUÍ
+        const ESCALA_GIZMO = 0.8; // Factor de escala para todos los gizmos
 
         function crearGizmosTraslacion(obj) {
             const colores = [0xff0000, 0x00ff00, 0x0000ff];
@@ -2203,13 +1507,13 @@
             for (let i = 0; i < 3; i++) {
                 const grupo = new THREE.Group();
                 const barra = new THREE.Mesh(
-                    new THREE.CylinderGeometry(0.015 * ESCALA_GIZMO, 0.015 * ESCALA_GIZMO, 0.8 * ESCALA_GIZMO, 8),
+                    new THREE.CylinderGeometry(0.02 * ESCALA_GIZMO, 0.02 * ESCALA_GIZMO, 1 * ESCALA_GIZMO, 8),
                     new THREE.MeshBasicMaterial({ color: colores[i], transparent: true, opacity: 0.8 }));
-                barra.position.y = 0.4 * ESCALA_GIZMO;
+                barra.position.y = 0.5 * ESCALA_GIZMO;
                 const punta = new THREE.Mesh(
-                    new THREE.ConeGeometry(0.05 * ESCALA_GIZMO, 0.15 * ESCALA_GIZMO, 8),
+                    new THREE.ConeGeometry(0.06 * ESCALA_GIZMO, 0.2 * ESCALA_GIZMO, 8),
                     new THREE.MeshBasicMaterial({ color: colores[i], transparent: true, opacity: 0.8 }));
-                punta.position.y = 0.9 * ESCALA_GIZMO;
+                punta.position.y = 1.1 * ESCALA_GIZMO;
                 grupo.add(barra);
                 grupo.add(punta);
 
@@ -2234,11 +1538,11 @@
             const size = new THREE.Vector3();
             bbox.getSize(size);
             const maxDim = Math.max(size.x, size.y, size.z);
-            const radioAnillo = maxDim * 0.5 * ESCALA_GIZMO; /* Adjusted ring radius */
+            const radioAnillo = maxDim * 0.7 * ESCALA_GIZMO; // Ajuste de escala para el radio
 
             for (let i = 0; i < 3; i++) {
                 const anillo = new THREE.Mesh(
-                    new THREE.TorusGeometry(radioAnillo, 0.01 * ESCALA_GIZMO, 16, 100), /* Adjusted tube radius */
+                    new THREE.TorusGeometry(radioAnillo, 0.02 * ESCALA_GIZMO, 16, 100), // Grosor del anillo también escalado
                     new THREE.MeshBasicMaterial({ color: colores[i], transparent: true, opacity: 0.8, side: THREE.DoubleSide })
                 );
                 anillo.position.copy(obj.position);
@@ -2268,7 +1572,7 @@
                 new THREE.Vector3(-halfSize.x, -halfSize.y, -halfSize.z)
             ];
 
-            const gizmoSize = 0.1 * ESCALA_GIZMO; /* Reduced gizmo size */
+            const gizmoSize = 0.15 * ESCALA_GIZMO; // Ajuste de escala para el tamaño de los cubos
             for (const posRel of posicionesRelativas) {
                 const cuboGizmo = new THREE.Mesh(
                     new THREE.BoxGeometry(gizmoSize, gizmoSize, gizmoSize),
@@ -2288,7 +1592,7 @@
             eliminarGizmos();
             if (!obj) return;
             if (riggingModeActivo) return;
-            if (obj.userData.isLocked) return;
+            if (obj.userData.isLocked) return; // No crear gizmos si el objeto está bloqueado
 
             switch (modoTransformacion) {
                 case 'trasladar':
@@ -2345,7 +1649,7 @@
                     }
 
                     if (hitGizmo && (hitGizmo.userData.tipoGizmo === 'traslacion' || hitGizmo.userData.tipoGizmo === 'rotacion' || hitGizmo.userData.tipoGizmo === 'escala')) {
-                        if (objetoSeleccionado.userData.isLocked) {
+                        if (objetoSeleccionado.userData.isLocked) { // Comprobar bloqueo al arrastrar gizmo
                             mostrarToast("🔒 Objeto bloqueado. Desbloquéalo para mover.");
                             return;
                         }
@@ -2377,7 +1681,7 @@
                 if (objetoSeleccionado) {
                     objetoSeleccionado = null;
                     eliminarGizmos();
-                    updateObjectPropertiesPanel(null); // Clear object properties
+                    ocultarColorPicker();
                     actualizarLista();
                     mostrarToast("🤷‍♂️ Nada seleccionado.");
                 }
@@ -2398,7 +1702,7 @@
             if (!tocando || !objetoSeleccionado || e.touches.length > 1) {
                 return;
             }
-            if (objetoSeleccionado.userData.isLocked) {
+            if (objetoSeleccionado.userData.isLocked) { // Comprobar bloqueo al mover
                 return;
             }
 
@@ -2451,7 +1755,6 @@
                         g.position.copy(objetoSeleccionado.position);
                     }
                 });
-                updateTransformInputs(objetoSeleccionado); // Update UI inputs
 
             } else if (objetoArrastrando.userData.tipoGizmo === 'rotacion') {
                 const eje = objetoArrastrando.userData.eje;
@@ -2472,7 +1775,6 @@
                 }
                 objetoSeleccionado.rotateOnWorldAxis(axis, deltaRotation);
                 gizmos.filter(g => g.userData.tipoGizmo === 'rotacion').forEach(g => g.position.copy(objetoSeleccionado.position));
-                updateTransformInputs(objetoSeleccionado); // Update UI inputs
 
             } else if (objetoArrastrando.userData.tipoGizmo === 'escala') {
                 const scaleSpeed = sensitivity * 0.01;
@@ -2483,7 +1785,6 @@
                 newScale = Math.max(0.01, newScale);
 
                 objetoSeleccionado.scale.set(newScale, newScale, newScale);
-                updateTransformInputs(objetoSeleccionado); // Update UI inputs
             }
             previousTouchPos.set(currentTouchX, currentTouchY);
 
@@ -2549,8 +1850,9 @@
                         if (objetoSeleccionado === obj) {
                             objetoSeleccionado = null;
                             eliminarGizmos();
-                            updateObjectPropertiesPanel(null);
+                            ocultarColorPicker();
                         }
+                        // Limpiar bboxHelper si existe
                         if (obj.userData.bboxHelper) {
                             escena.remove(obj.userData.bboxHelper);
                             obj.userData.bboxHelper.dispose();
@@ -2577,25 +1879,15 @@
                         obj.scale.copy(accion.oldState.scale);
                         if (objetoSeleccionado === obj) {
                             crearGizmos(obj);
-                            updateTransformInputs(obj);
                         }
                         mostrarToast(`↩ Deshecho: Mover ${obj.name}`);
                     }
                     break;
                 case 'color':
                     if (obj && accion.oldColor !== undefined) {
-                        if (obj.isMesh && obj.material) {
-                            obj.material.color.set(accion.oldColor);
-                        } else if (obj.userData.tipo === 'modelo') {
-                            obj.traverse((child) => {
-                                if (child.isMesh && child.material) {
-                                    child.material.color.set(accion.oldColor);
-                                }
-                            });
-                            obj.userData.lastColor = accion.oldColor;
-                        }
+                        obj.material.color.set(accion.oldColor);
                         if (objetoSeleccionado === obj) {
-                            updateObjectPropertiesPanel(obj);
+                            colorPicker.value = "#" + obj.material.color.getHexString();
                         }
                         mostrarToast(`↩ Deshecho: Color ${obj.name}`);
                     }
@@ -2605,9 +1897,6 @@
                         obj.material = deserializarMaterial(accion.oldMaterialData);
                         obj.material.needsUpdate = true;
                         obj.userData.textureURL = accion.oldMaterialData.map;
-                        if (objetoSeleccionado === obj) {
-                            updateObjectPropertiesPanel(obj);
-                        }
                         mostrarToast(`↩ Deshecho: Textura para ${obj.name}`);
                     }
                     break;
@@ -2633,43 +1922,30 @@
                         mostrarToast(`↩ Deshecho: Color Luz Ambiente`);
                     }
                     break;
-                case 'directionalIntensity':
-                    if (accion.oldIntensity !== undefined) {
-                        directionalLight.intensity = accion.oldIntensity;
-                        directionalLightIntensitySlider.value = accion.oldIntensity;
-                        directionalLightIntensityLabel.textContent = directionalLight.intensity.toFixed(2);
-                        mostrarToast(`↩ Deshecho: Intensidad Luz Direccional`);
-                    }
-                    break;
-                case 'directionalColor':
-                    if (accion.oldColor !== undefined) {
-                        directionalLight.color.set(accion.oldColor);
-                        directionalLightColorPicker.value = "#" + new THREE.Color(accion.oldColor).getHexString();
-                        mostrarToast(`↩ Deshecho: Color Luz Direccional`);
-                    }
-                    break;
                 case 'skybox':
                     toggleSkybox(!accion.newState);
                     skyboxCheckbox.checked = !accion.newState;
                     mostrarToast(`↩ Deshecho: Skybox ${!accion.newState ? 'Activado' : 'Desactivado'}`);
                     break;
-                case 'lock':
+                case 'lock': // NUEVO: Deshacer bloqueo
                     if (obj) {
                         obj.userData.isLocked = !accion.newState;
                         actualizarLista();
-                        if (objetoSeleccionado === obj) {
+                        if (objetoSeleccionado === obj) { // Si estaba seleccionado y se desbloquea, crear gizmos
                             crearGizmos(obj);
-                        } else if (obj.userData.isLocked) {
+                        } else if (obj.userData.isLocked) { // Si se bloquea, eliminar gizmos si los tenía
                              eliminarGizmos();
                         }
                         mostrarToast(`↩ Deshecho: ${obj.name} ${obj.userData.isLocked ? 'bloqueado' : 'desbloqueado'}`);
                     }
                     break;
-                case 'group':
-                    if (obj) {
+                case 'group': // NUEVO: Deshacer agrupar
+                    if (obj) { // obj es el grupo
+                        // Quitar el grupo de la escena y objetos
                         escena.remove(obj);
                         objetos.splice(objetos.indexOf(obj), 1);
 
+                        // Re-añadir los hijos a la escena y objetos
                         accion.childUuids.forEach(childUuid => {
                             const childObj = escena.getObjectByProperty('uuid', childUuid);
                             if (childObj) {
@@ -2679,21 +1955,25 @@
                         });
                         objetoSeleccionado = null;
                         eliminarGizmos();
-                        updateObjectPropertiesPanel(null);
+                        ocultarColorPicker();
                         actualizarLista();
                         mostrarToast(`↩ Deshecho: Agrupar ${obj.name}`);
                     }
                     break;
-                case 'ungroup':
-                    if (obj) {
+                case 'ungroup': // NUEVO: Deshacer desagrupar
+                    if (obj) { // obj es el objeto original (el grupo se elimina al desagrupar)
+                        // No hay un objeto con el UUID del grupo original después de desagrupar,
+                        // por lo que deserializamos el grupo completo y lo re-ensamblamos
                         const oldGroup = deserializarObjeto(accion.oldGroupData);
                         escena.add(oldGroup);
                         objetos.push(oldGroup);
                         
+                        // Mover los hijos de vuelta al grupo
                         accion.childUuids.forEach(childUuid => {
-                            const childObj = escena.getObjectByProperty('uuid', childUuid);
+                            const childObj = escena.getObjectByProperty('uuid', childUuid); // Esto aún apunta a los objetos en la escena global
                             if (childObj) {
                                 oldGroup.attach(childObj);
+                                // Asegurarse de que el hijo no esté duplicado en la lista principal de objetos
                                 const idx = objetos.indexOf(childObj);
                                 if (idx > -1) objetos.splice(idx, 1);
                             }
@@ -2703,29 +1983,32 @@
                         mostrarToast(`↩ Deshecho: Desagrupar ${oldGroup.name}`);
                     }
                     break;
-                case 'lightIntensity':
+                case 'lightIntensity': // Deshacer intensidad de luz de punto
                     if (obj && obj.userData.tipo === 'luzPunto' && accion.oldIntensity !== undefined) {
                         obj.intensity = accion.oldIntensity;
                         if (objetoSeleccionado === obj) {
-                            updateObjectPropertiesPanel(obj);
+                            pointLightIntensitySlider.value = obj.intensity;
+                            pointLightIntensityLabel.textContent = obj.intensity.toFixed(1);
                         }
                         mostrarToast(`↩ Deshecho: Intensidad de luz ${obj.name}`);
                     }
                     break;
-                case 'lightDistance':
+                case 'lightDistance': // Deshacer distancia de luz de punto
                     if (obj && obj.userData.tipo === 'luzPunto' && accion.oldDistance !== undefined) {
                         obj.distance = accion.oldDistance;
                         if (objetoSeleccionado === obj) {
-                            updateObjectPropertiesPanel(obj);
+                            pointLightDistanceSlider.value = obj.distance;
+                            pointLightDistanceLabel.textContent = obj.distance.toFixed(1) + (obj.distance === 0 ? " (infinita)" : "");
                         }
                         mostrarToast(`↩ Deshecho: Distancia de luz ${obj.name}`);
                     }
                     break;
-                case 'lightColor':
+                case 'lightColor': // Deshacer color de luz de punto
                     if (obj && obj.userData.tipo === 'luzPunto' && accion.oldColor !== undefined) {
                         obj.color.set(accion.oldColor);
                         if (objetoSeleccionado === obj) {
-                            updateObjectPropertiesPanel(obj);
+                            pointLightColorPicker.value = "#" + obj.color.getHexString();
+                            // Actualizar color del helper visual si existe
                             const helper = obj.children.find(c => c.name.startsWith(`Helper `));
                             if (helper && helper.material) {
                                 helper.material.color.set(obj.color);
@@ -2733,33 +2016,6 @@
                         }
                         mostrarToast(`↩ Deshecho: Color de luz ${obj.name}`);
                     }
-                    break;
-                case 'materialProp':
-                    if (obj && obj.isMesh && obj.material && accion.prop && accion.oldValue !== undefined) {
-                        if (accion.prop === 'transparent') {
-                            obj.material.transparent = accion.oldValue;
-                            if (!accion.oldValue && obj.material.opacity < 1) { // If reverting to non-transparent, reset opacity
-                                obj.material.opacity = 1;
-                            }
-                        } else {
-                            obj.material[accion.prop] = accion.oldValue;
-                        }
-                        obj.material.needsUpdate = true;
-                        if (objetoSeleccionado === obj) {
-                            updateObjectPropertiesPanel(obj);
-                        }
-                        mostrarToast(`↩ Deshecho: Propiedad de material (${accion.prop}) de ${obj.name}`);
-                    }
-                    break;
-                case 'axesHelper':
-                    axesHelper.visible = accion.oldState;
-                    axesHelperCheckbox.checked = accion.oldState;
-                    mostrarToast(`↩ Deshecho: Ejes ${accion.oldState ? 'Visible' : 'Oculto'}`);
-                    break;
-                case 'gridHelper':
-                    gridHelper.visible = accion.oldState;
-                    gridHelperCheckbox.checked = accion.oldState;
-                    mostrarToast(`↩ Deshecho: Cuadrícula ${accion.oldState ? 'Visible' : 'Oculto'}`);
                     break;
             }
             indiceHistorial--;
@@ -2793,8 +2049,9 @@
                         if (objetoSeleccionado === obj) {
                             objetoSeleccionado = null;
                             eliminarGizmos();
-                            updateObjectPropertiesPanel(null);
+                            ocultarColorPicker();
                         }
+                        // Limpiar bboxHelper si existe
                         if (obj.userData.bboxHelper) {
                             escena.remove(obj.userData.bboxHelper);
                             obj.userData.bboxHelper.dispose();
@@ -2811,25 +2068,15 @@
                         obj.scale.copy(accion.newState.scale);
                         if (objetoSeleccionado === obj) {
                             crearGizmos(obj);
-                            updateTransformInputs(obj);
                         }
                         mostrarToast(`↪ Rehaciendo: Mover ${obj.name}`);
                     }
                     break;
                 case 'color':
                     if (obj && accion.newColor !== undefined) {
-                        if (obj.isMesh && obj.material) {
-                            obj.material.color.set(accion.newColor);
-                        } else if (obj.userData.tipo === 'modelo') {
-                            obj.traverse((child) => {
-                                if (child.isMesh && child.material) {
-                                    child.material.color.set(accion.newColor);
-                                }
-                            });
-                            obj.userData.lastColor = accion.newColor;
-                        }
+                        obj.material.color.set(accion.newColor);
                         if (objetoSeleccionado === obj) {
-                            updateObjectPropertiesPanel(obj);
+                            colorPicker.value = "#" + obj.material.color.getHexString();
                         }
                         mostrarToast(`↪ Rehaciendo: Color ${obj.name}`);
                     }
@@ -2849,9 +2096,6 @@
                             obj.material = newMaterial;
                             obj.material.needsUpdate = true;
                             obj.userData.textureURL = accion.newTextureURL;
-                            if (objetoSeleccionado === obj) {
-                                updateObjectPropertiesPanel(obj);
-                            }
                             mostrarToast(`↪ Rehaciendo: Textura para ${obj.name}`);
                         });
                     }
@@ -2878,27 +2122,12 @@
                         mostrarToast(`↪ Rehaciendo: Color Luz Ambiente`);
                     }
                     break;
-                case 'directionalIntensity':
-                    if (accion.newIntensity !== undefined) {
-                        directionalLight.intensity = accion.newIntensity;
-                        directionalLightIntensitySlider.value = accion.newIntensity;
-                        directionalLightIntensityLabel.textContent = directionalLight.intensity.toFixed(2);
-                        mostrarToast(`↪ Rehaciendo: Intensidad Luz Direccional`);
-                    }
-                    break;
-                case 'directionalColor':
-                    if (accion.newColor !== undefined) {
-                        directionalLight.color.set(accion.newColor);
-                        directionalLightColorPicker.value = "#" + new THREE.Color(accion.newColor).getHexString();
-                        mostrarToast(`↪ Rehaciendo: Color Luz Direccional`);
-                    }
-                    break;
                 case 'skybox':
                     toggleSkybox(accion.newState);
                     skyboxCheckbox.checked = accion.newState;
                     mostrarToast(`↪ Rehaciendo: Skybox ${accion.newState ? 'Activado' : 'Desactivado'}`);
                     break;
-                case 'lock':
+                case 'lock': // NUEVO: Rehacer bloqueo
                     if (obj) {
                         obj.userData.isLocked = accion.newState;
                         actualizarLista();
@@ -2912,7 +2141,7 @@
                         mostrarToast(`↪ Rehaciendo: ${obj.name} ${obj.userData.isLocked ? 'bloqueado' : 'desbloqueado'}`);
                     }
                     break;
-                case 'group':
+                case 'group': // NUEVO: Rehacer agrupar
                     if (accion.groupData) {
                         const newGroup = deserializarObjeto(accion.groupData);
                         escena.add(newGroup);
@@ -2922,6 +2151,7 @@
                             const childObj = escena.getObjectByProperty('uuid', childUuid);
                             if (childObj) {
                                 newGroup.attach(childObj);
+                                // Asegurarse de que el hijo no esté duplicado en la lista principal de objetos
                                 const idx = objetos.indexOf(childObj);
                                 if (idx > -1) objetos.splice(idx, 1);
                             }
@@ -2931,48 +2161,53 @@
                         mostrarToast(`↪ Rehaciendo: Agrupar ${newGroup.name}`);
                     }
                     break;
-                case 'ungroup':
-                    if (obj) {
+                case 'ungroup': // NUEVO: Rehacer desagrupar
+                    if (obj) { // obj es el objeto original (el grupo se elimina al desagrupar)
+                        // No hay un objeto con el UUID del grupo original después de desagrupar,
+                        // por lo que deserializamos el grupo completo y lo re-ensamblamos
                         const oldGroup = deserializarObjeto(accion.oldGroupData);
-                        escena.remove(oldGroup);
+                        escena.remove(oldGroup); // Se elimina el grupo, pero los hijos quedan
+                        // Eliminar los hijos de la escena si existen (solo si estaban en el grupo)
                         accion.childUuids.forEach(childUuid => {
                             const childObj = escena.getObjectByProperty('uuid', childUuid);
                             if (childObj) {
-                                oldGroup.remove(childObj);
-                                escena.add(childObj);
-                                objetos.push(childObj);
+                                oldGroup.remove(childObj); // Desadjuntar del grupo temporal
+                                escena.add(childObj); // Volver a añadir a la escena
+                                objetos.push(childObj); // Volver a añadir a la lista de objetos
                             }
                         });
                         objetoSeleccionado = null;
                         eliminarGizmos();
-                        updateObjectPropertiesPanel(null);
+                        ocultarColorPicker();
                         actualizarLista();
                         mostrarToast(`↪ Rehaciendo: Desagrupar ${oldGroup.name}`);
                     }
                     break;
-                case 'lightIntensity':
+                case 'lightIntensity': // Rehacer intensidad de luz de punto
                     if (obj && obj.userData.tipo === 'luzPunto' && accion.newIntensity !== undefined) {
                         obj.intensity = accion.newIntensity;
                         if (objetoSeleccionado === obj) {
-                            updateObjectPropertiesPanel(obj);
+                            pointLightIntensitySlider.value = obj.intensity;
+                            pointLightIntensityLabel.textContent = obj.intensity.toFixed(1);
                         }
                         mostrarToast(`↪ Rehaciendo: Intensidad de luz ${obj.name}`);
                     }
                     break;
-                case 'lightDistance':
+                case 'lightDistance': // Rehacer distancia de luz de punto
                     if (obj && obj.userData.tipo === 'luzPunto' && accion.newDistance !== undefined) {
                         obj.distance = accion.newDistance;
                         if (objetoSeleccionado === obj) {
-                            updateObjectPropertiesPanel(obj);
+                            pointLightDistanceSlider.value = obj.distance;
+                            pointLightDistanceLabel.textContent = obj.distance.toFixed(1) + (obj.distance === 0 ? " (infinita)" : "");
                         }
                         mostrarToast(`↪ Rehaciendo: Distancia de luz ${obj.name}`);
                     }
                     break;
-                case 'lightColor':
+                case 'lightColor': // Rehacer color de luz de punto
                     if (obj && obj.userData.tipo === 'luzPunto' && accion.newColor !== undefined) {
                         obj.color.set(accion.newColor);
                         if (objetoSeleccionado === obj) {
-                            updateObjectPropertiesPanel(obj);
+                            pointLightColorPicker.value = "#" + obj.color.getHexString();
                              const helper = obj.children.find(c => c.name.startsWith(`Helper `));
                             if (helper && helper.material) {
                                 helper.material.color.set(obj.color);
@@ -2980,33 +2215,6 @@
                         }
                         mostrarToast(`↪ Rehaciendo: Color de luz ${obj.name}`);
                     }
-                    break;
-                case 'materialProp':
-                    if (obj && obj.isMesh && obj.material && accion.prop && accion.newValue !== undefined) {
-                        if (accion.prop === 'transparent') {
-                            obj.material.transparent = accion.newValue;
-                            if (!accion.newValue && obj.material.opacity < 1) { // If redoing to non-transparent, reset opacity
-                                obj.material.opacity = 1;
-                            }
-                        } else {
-                            obj.material[accion.prop] = accion.newValue;
-                        }
-                        obj.material.needsUpdate = true;
-                        if (objetoSeleccionado === obj) {
-                            updateObjectPropertiesPanel(obj);
-                        }
-                        mostrarToast(`↪ Rehaciendo: Propiedad de material (${accion.prop}) de ${obj.name}`);
-                    }
-                    break;
-                case 'axesHelper':
-                    axesHelper.visible = accion.newState;
-                    axesHelperCheckbox.checked = accion.newState;
-                    mostrarToast(`↪ Rehaciendo: Ejes ${accion.newState ? 'Visible' : 'Oculto'}`);
-                    break;
-                case 'gridHelper':
-                    gridHelper.visible = accion.newState;
-                    gridHelperCheckbox.checked = accion.newState;
-                    mostrarToast(`↪ Rehaciendo: Cuadrícula ${accion.newState ? 'Visible' : 'Oculto'}`);
                     break;
             }
             actualizarBotonesUndoRedo();
@@ -3028,7 +2236,7 @@
                 position: obj.position.toArray(),
                 rotation: obj.rotation.toArray(),
                 scale: obj.scale.toArray(),
-                isLocked: obj.userData.isLocked || false,
+                isLocked: obj.userData.isLocked || false, // NUEVO: Guardar estado de bloqueo
                 keyframes: keyframes.has(obj.uuid) ? keyframes.get(obj.uuid).map(v => ({ position: v.position.toArray(), rotation: v.rotation.toArray(), scale: v.scale.toArray() })) : []
             };
 
@@ -3041,10 +2249,12 @@
                 data.textureURL = obj.userData.textureURL || null;
             }
 
+            // Si es un modelo GLTF, guardar sus animaciones (metadata, no la data binaria completa)
             if (obj.userData.gltfAnimations) {
                 data.gltfAnimations = obj.userData.gltfAnimations.map(anim => anim.name);
             }
             
+            // Si es un grupo, guardar los UUIDs de sus hijos
             if (obj.userData.tipo === 'grupo' && obj.children.length > 0) {
                 data.childrenUuids = obj.children.map(child => child.uuid);
             }
@@ -3054,19 +2264,22 @@
 
         function deserializarObjeto(data) {
             let obj;
+            // La deserialización de modelos GLTF/GLB por URL sigue siendo un desafío para localStorage
+            // Aquí, creamos un placeholder o nos basamos en tipos de geometría simple
             if (data.type === 'modelo') {
                 obj = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ color: 0x888888 }));
                 obj.name = data.name + " (Placeholder)";
             } else if (data.type === 'luzPunto') {
                 obj = new THREE.PointLight(data.lightColor, data.lightIntensity, data.lightDistance);
+                // Recrear el helper visual
                 const sphereSize = 0.2;
                 const pointLightHelper = new THREE.Mesh(
                     new THREE.SphereGeometry(sphereSize, 16, 16),
                     new THREE.MeshBasicMaterial({ color: obj.color, transparent: true, opacity: 0.5 })
                 );
-                pointLightHelper.name = "Helper " + data.name.split(' ')[2];
+                pointLightHelper.name = "Helper " + data.name.split(' ')[2]; // Asume el nombre "Luz de Punto X"
                 obj.add(pointLightHelper);
-            } else if (data.type === 'grupo') {
+            } else if (data.type === 'grupo') { // NUEVO: Deserializar grupos
                 obj = new THREE.Group();
             }
             else {
@@ -3076,9 +2289,6 @@
                     case 'esfera': geo = new THREE.SphereGeometry(0.6, 32, 16); break;
                     case 'cono': geo = new THREE.ConeGeometry(0.5, 1.2, 32); break;
                     case 'cilindro': geo = new THREE.CylinderGeometry(0.5, 0.5, 1.2, 32); break;
-                    case 'toroide': geo = new THREE.TorusGeometry(0.5, 0.2, 16, 100); break;
-                    case 'plano': geo = new THREE.PlaneGeometry(5, 5); break;
-                    case 'capsula': geo = new THREE.CapsuleGeometry(0.4, 1, 8, 16); break;
                     default: geo = new THREE.BoxGeometry(1, 1, 1); break;
                 }
                 obj = new THREE.Mesh(geo, deserializarMaterial(data.materialData));
@@ -3090,11 +2300,12 @@
             obj.rotation.fromArray(data.rotation);
             obj.scale.fromArray(data.scale);
             obj.userData.tipo = data.type;
-            obj.userData.isLocked = data.isLocked || false;
+            obj.userData.isLocked = data.isLocked || false; // Cargar estado de bloqueo
             obj.userData.lastColor = data.materialData ? data.materialData.color : undefined;
             obj.userData.textureURL = data.textureURL;
             obj.userData.gltfAnimations = data.gltfAnimations || null;
 
+            // Cargar keyframes
             if (data.keyframes && data.keyframes.length > 0) {
                 keyframes.set(obj.uuid, data.keyframes.map(k => ({
                     position: new THREE.Vector3().fromArray(k.position),
@@ -3103,22 +2314,19 @@
                 })));
             }
 
+            // Cargar datos de luz de punto
             if (data.type === 'luzPunto') {
                 obj.intensity = data.lightIntensity;
                 obj.distance = data.lightDistance;
                 obj.color.set(data.lightColor);
             }
             
+            // Si es un grupo, no tiene material ni textura, y sus hijos se añadirán después
             if (data.type === 'grupo' && data.childrenUuids) {
-                obj.userData.childrenUuids = data.childrenUuids;
-            } else {
-                // Store original material properties for normal mode and undo/redo
-                obj.userData.originalMaterial = obj.material.clone();
+                obj.userData.childrenUuids = data.childrenUuids; // Guardar para re-ensamblar después
+            } else { // Para objetos normales, almacenar material original
+                obj.userData.originalMaterial = obj.material;
                 obj.userData.originalMaterialColor = obj.material.color ? obj.material.color.getHex() : 0xffffff;
-                obj.userData.originalRoughness = obj.material.roughness;
-                obj.userData.originalMetalness = obj.material.metalness;
-                obj.userData.originalOpacity = obj.material.opacity;
-                obj.userData.originalTransparent = obj.material.transparent;
             }
 
             return obj;
@@ -3132,13 +2340,9 @@
                 riggingModeActivo: riggingModeActivo,
                 ambientLightIntensity: ambientLight.intensity,
                 ambientLightColor: ambientLight.color.getHex(),
-                directionalLightIntensity: directionalLight.intensity,
-                directionalLightColor: directionalLight.color.getHex(),
                 skyboxActive: skyboxActivo,
                 animationSpeed: duracionPorFrame,
-                modoVisualizacion: modoVisualizacion,
-                axesHelperVisible: axesHelper.visible,
-                gridHelperVisible: gridHelper.visible
+                modoVisualizacion: modoVisualizacion // NUEVO: Guardar modo de visualización
             };
             try {
                 localStorage.setItem('infinity3d_scene', JSON.stringify(data));
@@ -3164,7 +2368,8 @@
 
                 const data = JSON.parse(dataString);
                 
-                const deserializedObjectsMap = new Map();
+                // Primero deserializar todos los objetos sin adjuntar hijos a grupos
+                const deserializedObjectsMap = new Map(); // Para un acceso rápido por UUID
                 data.objetos.forEach(objData => {
                     const obj = deserializarObjeto(objData);
                     escena.add(obj);
@@ -3181,12 +2386,14 @@
                     }
                 });
 
+                // Luego, re-ensamblar los grupos adjuntando sus hijos
                 objetos.forEach(obj => {
                     if (obj.userData.tipo === 'grupo' && obj.userData.childrenUuids) {
                         obj.userData.childrenUuids.forEach(childUuid => {
                             const child = deserializedObjectsMap.get(childUuid);
                             if (child) {
-                                obj.attach(child);
+                                obj.attach(child); // Adjuntar el hijo al grupo
+                                // Eliminar el hijo del array de objetos principales si ya está en el grupo
                                 const index = objetos.indexOf(child);
                                 if (index > -1) {
                                     objetos.splice(index, 1);
@@ -3220,16 +2427,6 @@
                     ambientLightColorPicker.value = "#" + new THREE.Color(data.ambientLightColor).getHexString();
                 }
 
-                if (data.directionalLightIntensity !== undefined) {
-                    directionalLight.intensity = data.directionalLightIntensity;
-                    directionalLightIntensitySlider.value = data.directionalLightIntensity;
-                    directionalLightIntensityLabel.textContent = data.directionalLightIntensity.toFixed(2);
-                }
-                if (data.directionalLightColor !== undefined) {
-                    directionalLight.color.set(data.directionalLightColor);
-                    directionalLightColorPicker.value = "#" + new THREE.Color(data.directionalLightColor).getHexString();
-                }
-
                 if (data.skyboxActive !== undefined) {
                     skyboxCheckbox.checked = data.skyboxActive;
                     toggleSkybox(data.skyboxActive);
@@ -3244,26 +2441,11 @@
                     animSpeedLabel.textContent = `${data.animationSpeed} ms/frame`;
                 }
 
+                // NUEVO: Cargar modo de visualización
                 if (data.modoVisualizacion !== undefined) {
                     establecerModoVisualizacion(data.modoVisualizacion);
                 } else {
-                    establecerModoVisualizacion('normal');
-                }
-
-                if (data.axesHelperVisible !== undefined) {
-                    axesHelper.visible = data.axesHelperVisible;
-                    axesHelperCheckbox.checked = data.axesHelperVisible;
-                } else {
-                    axesHelper.visible = true;
-                    axesHelperCheckbox.checked = true;
-                }
-
-                if (data.gridHelperVisible !== undefined) {
-                    gridHelper.visible = data.gridHelperVisible;
-                    gridHelperCheckbox.checked = data.gridHelperVisible;
-                } else {
-                    gridHelper.visible = true;
-                    gridHelperCheckbox.checked = true;
+                    establecerModoVisualizacion('normal'); // Por defecto si no está guardado
                 }
 
                 mostrarToast("✅ Escena cargada exitosamente.");
@@ -3284,6 +2466,7 @@
             while(objetos.length > 0){
                 const obj = objetos.pop();
                 escena.remove(obj);
+                // Limpiar bboxHelper si existe
                 if (obj.userData.bboxHelper) {
                     escena.remove(obj.userData.bboxHelper);
                     obj.userData.bboxHelper.dispose();
@@ -3295,7 +2478,7 @@
             }
             objetoSeleccionado = null;
             eliminarGizmos();
-            updateObjectPropertiesPanel(null); // Clear object properties
+            ocultarColorPicker();
             actualizarLista();
             keyframes.clear();
             animando = false;
@@ -3308,46 +2491,18 @@
             riggingModeCheckbox.checked = false;
             toggleRiggingMode(false);
             
+            // Restablecer valores de configuración a los predeterminados de la UI
             ambientLight.intensity = parseFloat(ambientLightIntensitySlider.value);
             ambientLightIntensityLabel.textContent = ambientLight.intensity.toFixed(2);
             ambientLight.color.set(0xffffff);
             ambientLightColorPicker.value = "#ffffff";
 
-            directionalLight.intensity = parseFloat(directionalLightIntensitySlider.value);
-            directionalLightIntensityLabel.textContent = directionalLight.intensity.toFixed(2);
-            directionalLight.color.set(0xffffff);
-            directionalLightColorPicker.value = "#ffffff";
-
-            // Reset object specific properties in the panel
-            updateObjectPropertiesPanel(null);
-
-            // Reset sliders and labels for material properties
-            const roughnessSlider = document.getElementById("roughnessSlider");
-            const roughnessLabel = document.getElementById("roughnessLabel");
-            const metalnessSlider = document.getElementById("metalnessSlider");
-            const metalnessLabel = document.getElementById("metalnessLabel");
-            const opacitySlider = document.getElementById("opacitySlider");
-            const opacityLabel = document.getElementById("opacityLabel");
-            const transparentCheckbox = document.getElementById("transparentCheckbox");
-            const pointLightIntensitySlider = document.getElementById("pointLightIntensitySlider");
-            const pointLightIntensityLabel = document.getElementById("pointLightIntensityLabel");
-            const pointLightDistanceSlider = document.getElementById("pointLightDistanceSlider");
-            const pointLightDistanceLabel = document.getElementById("pointLightDistanceLabel");
-            const pointLightColorPicker = document.getElementById("pointLightColorPicker");
-
-            if (roughnessSlider) { roughnessSlider.value = 0.5; roughnessLabel.textContent = "0.50"; }
-            if (metalnessSlider) { metalnessSlider.value = 0.0; metalnessLabel.textContent = "0.00"; }
-            if (opacitySlider) { opacitySlider.value = 1.0; opacityLabel.textContent = "1.00"; }
-            if (transparentCheckbox) { transparentCheckbox.checked = false; }
-            if (pointLightIntensitySlider) { pointLightIntensitySlider.value = 1; pointLightIntensityLabel.textContent = "1.0"; }
-            if (pointLightDistanceSlider) { pointLightDistanceSlider.value = 0; pointLightDistanceLabel.textContent = "0.0 (infinita)"; }
-            if (pointLightColorPicker) { pointLightColorPicker.value = "#ffffff"; }
-
-
-            axesHelper.visible = true;
-            axesHelperCheckbox.checked = true;
-            gridHelper.visible = true;
-            gridHelperCheckbox.checked = true;
+            // Restablecer valores de luz de punto
+            pointLightIntensitySlider.value = 1;
+            pointLightIntensityLabel.textContent = "1.0";
+            pointLightDistanceSlider.value = 0;
+            pointLightDistanceLabel.textContent = "0.0 (infinita)";
+            pointLightColorPicker.value = "#ffffff";
 
             skyboxCheckbox.checked = true;
             toggleSkybox(true);
@@ -3355,7 +2510,7 @@
             duracionPorFrame = parseInt(animSpeedSlider.value);
             animSpeedLabel.textContent = `${duracionPorFrame} ms/frame`;
 
-            establecerModoVisualizacion('normal');
+            establecerModoVisualizacion('normal'); // Restablecer modo de visualización
 
             mostrarToast("🆕 Nueva escena creada.");
         }
@@ -3365,7 +2520,6 @@
 
         const keyframes = new Map();
         let animando = false, frameActual = 0, totalFrames = 0;
-        let animationInterval = null;
 
         function agregarFrame() {
             if (!objetoSeleccionado) {
@@ -3393,8 +2547,6 @@
                 rotation: objetoSeleccionado.rotation.clone(),
                 scale: objetoSeleccionado.scale.clone()
             });
-            totalFrames = keyframes.get(id).length;
-            updateTimelinePlayhead();
             mostrarToast(`✔️ Fotograma ${keyframes.get(id).length} agregado para ${objetoSeleccionado.name}.`);
         }
 
@@ -3417,57 +2569,71 @@
                 mostrarToast("⚠️ Necesitas al menos 2 fotogramas para animar.");
                 return;
             }
-
-            if (animando) {
-                animando = false;
-                clearInterval(animationInterval);
-                mostrarToast("⏸ Animación pausada.");
-            } else {
-                frameActual = 0;
-                totalFrames = frames.length;
-                animando = true;
-                mostrarToast(`▶ Animando ${objetoSeleccionado.name}...`);
-                animationInterval = setInterval(() => animarFrameStep(id), duracionPorFrame);
-            }
+            frameActual = 0;
+            totalFrames = frames.length;
+            animando = true;
+            mostrarToast(`▶ Animando ${objetoSeleccionado.name}...`);
+            animarFrame(id);
         }
 
-        function animarFrameStep(id) {
+        function animarFrame(id) {
             if (!animando) return;
 
             const frames = keyframes.get(id);
             if (!frames || frames.length === 0) {
                 animando = false;
-                clearInterval(animationInterval);
                 return;
             }
 
-            const currentFrameData = frames[frameActual % frames.length];
-            objetoSeleccionado.position.copy(currentFrameData.position);
-            objetoSeleccionado.rotation.copy(currentFrameData.rotation);
-            objetoSeleccionado.scale.copy(currentFrameData.scale);
+            const actualFrameIndex = frameActual % frames.length;
+            const nextFrameIndex = (frameActual + 1) % frames.length;
 
-            updateTransformInputs(objetoSeleccionado); // Update UI inputs during animation
-            updateTimelinePlayhead();
+            const actualState = frames[actualFrameIndex];
+            const nextState = frames[nextFrameIndex];
 
-            frameActual++;
-            if (frameActual >= totalFrames) {
-                frameActual = 0; // Loop animation
-                // If you want it to stop after one loop:
-                // animando = false;
-                // clearInterval(animationInterval);
-                // mostrarToast("⏸ Animación finalizada.");
+            let progreso = 0;
+            const inicio = performance.now();
+
+            function paso(t) {
+                if (!animando) return;
+
+                progreso = (t - inicio) / duracionPorFrame;
+                if (progreso >= 1) {
+                    objetoSeleccionado.position.copy(nextState.position);
+                    objetoSeleccionado.rotation.copy(nextState.rotation);
+                    objetoSeleccionado.scale.copy(nextState.scale);
+
+                    frameActual++;
+                    if (frameActual >= totalFrames) {
+                        animando = false;
+                        mostrarToast("⏸ Animación finalizada.");
+                        return;
+                    }
+                    setTimeout(() => animarFrame(id), 50);
+                    return;
+                }
+
+                objetoSeleccionado.position.lerpVectors(actualState.position, nextState.position, progreso);
+                objetoSeleccionado.scale.lerpVectors(actualState.scale, nextState.scale, progreso);
+
+                const q1 = new THREE.Quaternion().setFromEuler(actualState.rotation);
+                const q2 = new THREE.Quaternion().setFromEuler(nextState.rotation);
+                objetoSeleccionado.quaternion.slerpQuaternions(q1, q2, progreso);
+                objetoSeleccionado.rotation.setFromQuaternion(objetoSeleccionado.quaternion);
+
+                if (objetoSeleccionado && objetoSeleccionado.uuid === id) {
+                    if (modoTransformacion === 'trasladar' || modoTransformacion === 'rotar') {
+                        gizmos.forEach(g => {
+                            if (!g.parent || g.parent.uuid !== objetoSeleccionado.uuid) {
+                                g.position.copy(objetoSeleccionado.position);
+                            }
+                        });
+                    }
+                }
+                requestAnimationFrame(paso);
             }
+            requestAnimationFrame(paso);
         }
-
-        function updateTimelinePlayhead() {
-            if (totalFrames > 0) {
-                const progress = (frameActual / totalFrames) * 100;
-                timelinePlayhead.style.left = `${progress}%`;
-            } else {
-                timelinePlayhead.style.left = '0%';
-            }
-        }
-        updateTimelinePlayhead(); // Initialize playhead position
 
         // --- Exportar Video ---
 
@@ -3511,37 +2677,20 @@
                 mostrarToast("✅ Video exportado.");
             };
 
-            const originalAnimandoState = animando;
-            const originalFrameActual = frameActual;
-            const originalAnimationInterval = animationInterval;
+            reproducirAnimacion();
+            if (animando) {
+                grabador.start();
+                mostrarToast("🎥 Grabando animación...");
+                const duracionTotalAnimacion = (totalFrames - 1) * duracionPorFrame;
 
-            // Reset animation state for recording
-            animando = true;
-            frameActual = 0;
-            clearInterval(animationInterval);
-            updateTimelinePlayhead();
-
-            grabador.start();
-            mostrarToast("🎥 Grabando animación...");
-            const duracionTotalAnimacion = (totalFrames) * duracionPorFrame; // Record all frames once
-
-            let recordFrameInterval = setInterval(() => {
-                animarFrameStep(objetoSeleccionado.uuid);
-                if (frameActual >= totalFrames) {
-                    clearInterval(recordFrameInterval);
+                setTimeout(() => {
                     if (grabador.state !== "inactive") {
                         grabador.stop();
                     }
-                    // Restore original animation state
-                    animando = originalAnimandoState;
-                    frameActual = originalFrameActual;
-                    animationInterval = originalAnimationInterval;
-                    if (animando) {
-                        animationInterval = setInterval(() => animarFrameStep(objetoSeleccionado.uuid), duracionPorFrame);
-                    }
-                    updateTimelinePlayhead();
-                }
-            }, duracionPorFrame);
+                }, duracionTotalAnimacion + 500);
+            } else {
+                 mostrarToast("⚠️ La animación no pudo comenzar para grabar.");
+            }
         }
 
         function exportarImagen() {
@@ -3623,6 +2772,7 @@
         function bucle() {
             requestAnimationFrame(bucle);
             controls.update();
+            // Actualizar bbox helpers si el modo es 'bbox'
             if (modoVisualizacion === 'bbox') {
                 objetos.forEach(obj => {
                     if (obj.userData.bboxHelper) {
@@ -3637,4 +2787,3 @@
     </script>
 </body>
 </html>
-
